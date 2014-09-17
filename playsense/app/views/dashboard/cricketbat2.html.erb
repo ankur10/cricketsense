@@ -182,18 +182,17 @@
     chart1.drawRickshawChart();
 
     global_socket.on('ti_sensor_tag_data', function (data) {        
+        
         var n = data.ti_sensor_tag_data;
 
         var gyroscope_data = n.gyroscope_data;
         // chart1.plotData(gyroscope_data);
 
         var gr = n.accelerometer_data;
-        // chart1.plotData(accelerometer_data);
+        chart1.plotData(accelerometer_data);
 
         var magnetometer_data = n.magnetometer_data;
-        chart1.plotData(magnetometer_data);
-
-
+        // chart1.plotData(magnetometer_data);
     });
 
 </script>
