@@ -1,0 +1,224 @@
+<div id="val"></div>
+<div id="legend"></div>
+<div id="chart"></div>
+
+<script>
+
+
+var myobject = function() {
+
+
+
+
+	
+}
+
+
+
+var pointsArrayObject = function(timeInterval) {
+
+	var addDataPoint;
+	timeInterval = timeInterval || 1;
+
+	var timeBase = Math.floor(new Date().getTime() / 1000);
+
+	this.addNewDataPoint = function(data, pt_passed) {
+		var index = data[0].length;
+		data.forEach( function(series, i) {
+
+			var nx = (index * timeInterval) + timeBase;
+
+			var ny = pt_passed[i];
+
+			var pt = {};
+			pt.x = nx;
+			pt.y = ny;
+			series.push(pt)
+		} );
+	};	
+
+	this.removeData = function(data) {
+		data.forEach( function(series) {
+
+			var len = series.length;
+			if(len > 100){
+				series.shift();
+			}
+		} );
+		timeBase += timeInterval;
+	};
+};
+
+
+var seriesData = [[], [], []];
+var random = new pointsArrayObject(150);
+var graph = null;
+
+var origin_x = 0;
+var origin_y = 0;
+var origin_z = 0;
+
+var rot_x = 0, rot_y = 0, rot_z = 0;
+
+global_socket.on('device_event_channel', function (data) {
+	processDataReceivedOnSocket(data);
+});
+
+
+function processDataReceivedOnSocket(data){
+ 	var values = data.device_event.values;
+    var acceleration = values.acceleration;
+    var rotationRate = values.rotationRate;
+
+  	$("#val").html(acceleration.x);
+
+    // update rickshaw chart
+	random.removeData(seriesData);
+
+	// var pts_array = [ acceleration.x, acceleration.y, acceleration.z];
+
+	var x, y, z;
+
+	// acceleration rate
+	if ( (acceleration.x > -2) && (acceleration.x < 2) ){
+		acceleration.x = 0;
+	}
+
+	if ( (acceleration.y > -2) && (acceleration.y < 2) ){
+		acceleration.y= 0;
+	}
+
+	if ( (acceleration.z > -2) && (acceleration.z < 2) ){
+		acceleration.z = 0;
+	}
+
+
+	// rotation rate
+
+	if ( (rotationRate.alpha > -10) && (rotationRate.alpha < 10) ){
+		rotationRate.alpha = 0;
+	}
+	if(rotationRate.alpha != 0){
+		rot_x = rot_x + rotationRate.alpha;
+		if(rot_x / 360 > 1){
+			rot_x = rot_x % 360;
+		}
+	}
+
+
+	if ( (rotationRate.beta > -10) && (rotationRate.beta < 10) ){
+		rotationRate.beta = 0;
+	}
+	if(rotationRate.beta != 0){
+		rot_y = rot_y + rotationRate.beta;
+		if(rot_y / 360 > 1){
+			rot_y = rot_y % 360;
+		}
+
+	}
+
+	if ( (rotationRate.gamma > -10) && (rotationRate.gamma < 10) ){
+		rotationRate.gamma = 0;		
+	}
+	if(rotationRate.gamma != 0){
+		rot_z = rot_z + rotationRate.gamma;
+		if(rot_z / 360 > 1){
+			rot_z = rot_z % 360;
+		}		
+	}
+
+	// rot_x = parseFloat(rot_x).toFixed(2);
+	// rot_y = parseFloat(rot_y).toFixed(2);
+	// rot_z = parseFloat(rot_z).toFixed(2);
+
+
+	// var pts_array = [ acceleration.x, acceleration.y, acceleration.z];
+	// var pts_array = [ rotationRate.alpha, rotationRate.beta, rotationRate.gamma];
+
+	var pts_array = [ rot_x, rot_y, rot_z];
+
+	console.log(rot_x, rot_y, rot_z);
+
+	random.addNewDataPoint(seriesData, pts_array);
+
+	graph.update();
+}
+
+
+function drawRickshawChart(){
+
+	var palette = new Rickshaw.Color.Palette( { scheme: 'spectrum2000' } );
+
+	// instantiate our graph!
+
+	graph = new Rickshaw.Graph( {
+		element: document.getElementById("chart"),
+		width: 1800,
+		height: 500,
+		renderer: 'line',
+		stroke: true,
+		preserve: true,
+		min: "auto",
+		series: [
+			{
+				color: "#FF0000",
+				data: seriesData[0],
+				name: 'X'
+			},
+			{
+				color: "#00FF00",
+				data: seriesData[1],
+				name: 'Y'
+			},
+			{
+				color: "#0000FF",
+				data: seriesData[2],
+				name: 'Z'
+			}						
+		]
+	} );
+
+
+	graph.render();
+
+	var ticksTreatment = 'glow';
+
+	var xAxis = new Rickshaw.Graph.Axis.Time( {
+		graph: graph,
+		ticksTreatment: ticksTreatment,
+		timeFixture: new Rickshaw.Fixtures.Time.Local()
+	} );
+	xAxis.render();
+
+	var yAxis = new Rickshaw.Graph.Axis.Y( {
+		graph: graph,
+		// tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+		// ticksTreatment: ticksTreatment
+	} );
+	yAxis.render();
+
+	var legend = new Rickshaw.Graph.Legend({
+	    graph: graph,
+	    element: document.querySelector('#legend')
+	});
+
+	var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+    	graph: graph,
+    	legend: legend
+	});
+
+	var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
+    	graph: graph,
+    	legend: legend
+	});
+
+}
+
+
+drawRickshawChart();
+
+
+
+
+
+</script>

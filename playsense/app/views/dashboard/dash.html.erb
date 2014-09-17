@@ -1,0 +1,161 @@
+<div id="val"></div>
+
+<div id="chart_div"></div>
+
+<script>
+
+var accel_x_array = [];
+
+var len = 0;
+
+
+  global_socket.on('device_event_channel', function (data) {
+
+    var values = data.device_event.values;
+    var acceleration = values.acceleration;
+
+    var accel_x = acceleration.x;
+	accel_x_array.push(accel_x);
+	len = len + 1;
+
+	$("#val").html(accel_x);
+
+	var lll = accel_x_array.length;
+
+	if(lll > 200){
+		// accel_x_array.splice(0, 10);
+		accel_x_array.shift();
+	}
+
+	// console.log(accel_x_array.length);
+
+	var data = [];
+  	accel_x_array.forEach(function(d, i) {
+		var h = {};
+		h.date = i;
+		h.close = d;
+		data.push(h);
+  	});	
+   // drawChart(data);
+
+
+    var data2 = [];
+  	accel_x_array.forEach(function(d, i) {
+		var h = {};
+		h.x_val = i;
+		h.y_val = d;
+		data2.push(h);
+  	});
+   drawDimpleChart(data2);
+
+
+  });
+</script>
+
+
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+</style>
+
+<script>
+
+function drawDimpleChart(data){
+
+	$("#chart_div").empty();
+      
+      var svg = dimple.newSvg("#chart_div", 1200, 600);
+      var myChart = new dimple.chart(svg, data);
+      var x = myChart.addCategoryAxis("x", "x_val");
+      x.addOrderRule("x_val");
+      myChart.addMeasureAxis("y", "y_val");
+      myChart.addSeries(null, dimple.plot.line);
+      myChart.draw();
+}
+
+
+
+function drawChart(data){
+
+	var margin = {top: 20, right: 20, bottom: 30, left: 50},
+	    width = 960 - margin.left - margin.right,
+	    height = 500 - margin.top - margin.bottom;
+
+	var x = d3.time.scale()
+	    .range([0, width]);
+
+	var y = d3.scale.linear()
+	    .range([height, 0]);
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left");
+
+	var line = d3.svg.line()
+	    .x(function(d) { return x(d.date); })
+	    .y(function(d) { return y(d.close); });
+
+
+	$("#chart_div").html("");
+
+	var svg = d3.select("#chart_div").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	  x.domain(d3.extent(data, function(d) { return d.date; }));
+	  y.domain(d3.extent(data, function(d) { return d.close; }));
+
+	  svg.append("g")
+	      .attr("class", "x axis")
+	      .attr("transform", "translate(0," + height + ")")
+	      .call(xAxis);
+
+	  svg.append("g")
+	      .attr("class", "y axis")
+	      .call(yAxis)
+	    .append("text")
+	      .attr("transform", "rotate(-90)")
+	      .attr("y", 6)
+	      .attr("dy", ".71em")
+	      .style("text-anchor", "end")
+	      .text("Accel Values");
+
+	  svg.append("path")
+	      .datum(data)
+	      .attr("class", "line")
+	      .attr("d", line);
+
+
+
+
+}
+
+
+
+</script>

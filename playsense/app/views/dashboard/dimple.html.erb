@@ -1,0 +1,51 @@
+<div id="ankur"></div>
+
+<script type="text/javascript">
+
+    setInterval(func2, 1000);
+    // func2();
+
+
+
+    function func1(){
+      var svg = dimple.newSvg("body", 800, 600);
+      var data = [
+        { "Word":"Hello", "Awesomeness":2000 },
+        { "Word":"World", "Awesomeness":3000 }
+      ];
+      var chart = new dimple.chart(svg, data);
+      chart.addCategoryAxis("x", "Word");
+      chart.addMeasureAxis("y", "Awesomeness");
+      chart.addSeries(null, dimple.plot.bar);
+      chart.draw();
+    }
+
+
+    function func2(){
+
+      $("#ankur").html("");
+
+      var svg = dimple.newSvg("#ankur", 1200, 600);
+
+      var data = [];
+
+      for(var i=0; i<100; i++){
+        var h = {};
+        h.x_val = i;
+        h.y_val = 100*Math.random() + 10;
+        data.push(h);
+      }
+
+      var myChart = new dimple.chart(svg, data);
+      // myChart.setBounds(60, 30, 510, 305)
+      var x = myChart.addCategoryAxis("x", "x_val");
+      x.addOrderRule("x_val");
+      myChart.addMeasureAxis("y", "y_val");
+      myChart.addSeries(null, dimple.plot.line);
+      myChart.draw();
+    }
+
+
+  </script>
+
+

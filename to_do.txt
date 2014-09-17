@@ -1,0 +1,17 @@
+Sensor: 
+* Period change - increase the frequency. 
+	- Implement gyro period change function
+* Try 'onchange' function instead of period
+* Algorithm for sensor fusion
+* Detect shots
+
+
+UI:
+Metrics
+Record session + play
+Better bat rendering
+Graphs screen + rendering
+Mobile screen - make the above UI compatible on mobile
+New feature: aggregate stats screen
+Git repository
+

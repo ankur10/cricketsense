@@ -1,0 +1,43 @@
+  <div id="WebGL-output"> 
+  </div> 
+
+  <script type="text/javascript">
+
+
+
+  var myobj = function(){
+	  
+	  var obj1 = {};
+	  obj1.a = 0;
+	  
+	  obj1.init = function(x){
+	  	this.a = x;
+	  }
+	  
+	  obj1.f1 = function(){
+	  	console.log("inside f1 --->", this.a);
+	  }
+
+	  return obj1;
+  };
+
+
+
+  var a1 = new myobj();
+  console.log(a1);
+
+  a1.init(110);
+  a1.f1();
+
+
+
+  var a2 = new myobj();
+  console.log(a2);
+
+  a2.init(1);
+  a2.f1();
+
+  a1.f1();
+
+
+</script>

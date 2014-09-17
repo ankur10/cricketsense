@@ -1,0 +1,64 @@
+<div id="area" class="epoch category10" style="height: 200px;"></div>
+
+<div id="areaChart" class="epoch category10" style="height: 400px;"></div>
+
+
+<script>
+	var data = [
+  { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
+  { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
+];
+var areaChartInstance = $('#area').epoch({
+    type: 'area',
+    data: data,
+    axes: ['left', 'right', 'bottom']
+});
+
+
+</script>
+
+<script>
+
+var values_array = [];
+
+var start_time = 1370044800;
+
+for(var i=0; i < 1000; i++){
+	var h = {};
+	h.time = start_time;
+	h.y = Math.random()*100 + 10;
+	values_array.push(h);
+
+	start_time++;
+}
+
+var areaChartData = [
+  {
+    label: "Layer 1",
+    values: values_array
+  }
+];
+
+ var myChart = $('#areaChart').epoch({
+    type: 'time.area',
+    data: areaChartData
+  });
+
+setInterval(myupdate, 1000);
+
+function myupdate(){
+	var h = {};
+	h.x = start_time;
+	h.y = Math.random()*300 + 10;
+	console.log("new point is ", h);
+
+	console.log(myChart);
+	myChart.push(h);
+	start_time++;
+	console.log("new start_time is ", start_time);
+}
+
+
+
+
+</script>

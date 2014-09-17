@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PlaySense - Dashboard</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <%= stylesheet_link_tag    "application", media: "all" %>
+  <%= javascript_include_tag "application_dashboard" %>
+
+    <% node_server_port = 4545 %>
+    <% node_server =  "#{request.protocol}#{request.host}:#{node_server_port}" %>         
+    <% socket_library =  "#{node_server}/socket.io/socket.io.js" %>
+    <script src="<%=socket_library%>"></script>
+    <script type="text/javascript">  
+	  	var global_socket = io('<%=node_server%>');
+    </script>
+
+</head>
+<body>
+	<%= yield %>
+</body>
+</html>
+

@@ -1,0 +1,63 @@
+
+<script>
+	
+
+var circleData = [
+   { "cx": 20, "cy": 20, "radius": 20, "color" : "green" },
+   { "cx": 70, "cy": 70, "radius": 20, "color" : "purple" }];
+
+
+var rectangleData = [
+   { "rx": 600, "ry": 400, "height": 30, "width": 20, "color" : "blue" },
+   { "rx": 600, "ry": 260, "height": 30, "width": 30, "color" : "red" }
+ ];
+
+
+var svgContainer = d3.select("body").append("svg")
+                                     .attr("width",1800)
+                                     .attr("height",800);
+
+var circles = svgContainer.selectAll("circle")
+                           .data(circleData)
+                           .enter()
+                           .append("circle");
+
+var rectangles = svgContainer.selectAll("rect")
+                             .data(rectangleData)
+                             .enter()
+                             .append("rect")
+							  .attr("x", function (d) { return d.rx; })
+            	               .attr("y", function (d) { return d.ry; })
+        	                   .attr("height", function (d) { return d.height; })
+    	                       .attr("width", function (d) { return d.width; })
+	                           .style("fill", function(d) { return d.color; });
+                             ;            
+
+
+setInterval(myrotate,100);
+
+var angle = 1;
+function myrotate(){
+	console.log("inside myrotate")
+	var rectangles2 = svgContainer.selectAll("rect");
+	console.log(rectangles2);
+
+	rectangles2.forEach(function(arr){
+
+		arr.forEach(function(item){
+			var r_text = "rotate(" + angle + ")";
+
+			// var t = "translate(" + "600" +") rotate(" + angle + ")";
+			var t = "rotate(" + angle + ",600,400)";
+
+			$(item).attr("transform",t);
+			angle = angle + 10;
+
+			console.log(item);
+
+		})
+	})
+}
+
+
+</script>

@@ -1,0 +1,11 @@
+.chart_container{
+	padding: 10px;
+	margin-bottom: 25px;
+}
+
+.chart_container h3{
+	background-color: #EFEFEF;
+
+  /*background: -webkit-linear-gradient(90deg, #085078 10%, #4290A0 90%); /* Chrome 10+, Saf5.1+ */        	*/
+	padding: 5px;
+}

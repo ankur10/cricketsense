@@ -1,0 +1,563 @@
+[62507] 05 Sep 16:21:44.692 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.13 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 62507
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[62507] 05 Sep 16:21:44.694 # Server started, Redis version 2.8.13
+[62507] 05 Sep 16:21:44.694 * The server is now ready to accept connections on port 6379
+[62509] 05 Sep 16:21:44.701 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.13 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 62509
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[62509] 05 Sep 16:21:44.702 # Server started, Redis version 2.8.13
+[62509] 05 Sep 16:21:44.702 * The server is now ready to accept connections on port 6381
+[62509] 05 Sep 16:21:44.703 * Connecting to MASTER 127.0.0.1:6379
+[62509] 05 Sep 16:21:44.704 * MASTER <-> SLAVE sync started
+[62509] 05 Sep 16:21:44.704 * Non blocking connect for SYNC fired the event.
+[62509] 05 Sep 16:21:44.704 * Master replied to PING, replication can continue...
+[62509] 05 Sep 16:21:44.704 * Partial resynchronization not possible (no cached master)
+[62507] 05 Sep 16:21:44.704 * Slave asks for synchronization
+[62507] 05 Sep 16:21:44.704 * Full resync requested by slave.
+[62507] 05 Sep 16:21:44.704 * Starting BGSAVE for SYNC
+[62509] 05 Sep 16:21:44.704 * Full resync from master: db934eb3dbc98a88401627aed888af1b600c0b04:1
+[62507] 05 Sep 16:21:44.705 * Background saving started by pid 62511
+[62511] 05 Sep 16:21:44.706 * DB saved on disk
+[62507] 05 Sep 16:21:44.795 * Background saving terminated with success
+[62507] 05 Sep 16:21:44.795 * Synchronization with slave succeeded
+[62509] 05 Sep 16:21:44.796 * MASTER <-> SLAVE sync: receiving 18 bytes from master
+[62509] 05 Sep 16:21:44.796 * MASTER <-> SLAVE sync: Flushing old data
+[62509] 05 Sep 16:21:44.796 * MASTER <-> SLAVE sync: Loading DB in memory
+[62509] 05 Sep 16:21:44.796 * MASTER <-> SLAVE sync: Finished with success
+[62507] 05 Sep 19:51:05.302 # Disconnecting timedout slave: 127.0.0.1:6381
+[62507] 05 Sep 19:51:05.303 # Connection with slave 127.0.0.1:6381 lost.
+[62509] 05 Sep 19:51:05.304 # Connection with master lost.
+[62509] 05 Sep 19:51:05.304 * Caching the disconnected master state.
+[62509] 05 Sep 19:51:05.503 * Connecting to MASTER 127.0.0.1:6379
+[62509] 05 Sep 19:51:05.503 * MASTER <-> SLAVE sync started
+[62509] 05 Sep 19:51:05.503 * Non blocking connect for SYNC fired the event.
+[62509] 05 Sep 19:51:05.504 * Master replied to PING, replication can continue...
+[62509] 05 Sep 19:51:05.504 * Trying a partial resynchronization (request db934eb3dbc98a88401627aed888af1b600c0b04:12126).
+[62507] 05 Sep 19:51:05.504 * Slave asks for synchronization
+[62507] 05 Sep 19:51:05.505 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 12126.
+[62509] 05 Sep 19:51:05.505 * Successful partial resynchronization with master.
+[62509] 05 Sep 19:51:05.505 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[1356] 13 Sep 23:37:48.004 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.13 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 1356
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[1356] 13 Sep 23:37:48.011 # Server started, Redis version 2.8.13
+[1356] 13 Sep 23:37:48.011 * DB loaded from disk: 0.001 seconds
+[1356] 13 Sep 23:37:48.011 * The server is now ready to accept connections on port 6379
+[1358] 13 Sep 23:37:48.012 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.13 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 1358
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[1358] 13 Sep 23:37:48.013 # Server started, Redis version 2.8.13
+[1358] 13 Sep 23:37:48.014 * DB loaded from disk: 0.000 seconds
+[1358] 13 Sep 23:37:48.014 * The server is now ready to accept connections on port 6381
+[1358] 13 Sep 23:37:48.014 * Connecting to MASTER 127.0.0.1:6379
+[1358] 13 Sep 23:37:48.014 * MASTER <-> SLAVE sync started
+[1358] 13 Sep 23:37:48.014 * Non blocking connect for SYNC fired the event.
+[1358] 13 Sep 23:37:48.014 * Master replied to PING, replication can continue...
+[1358] 13 Sep 23:37:48.014 * Partial resynchronization not possible (no cached master)
+[1356] 13 Sep 23:37:48.014 * Slave asks for synchronization
+[1356] 13 Sep 23:37:48.014 * Full resync requested by slave.
+[1356] 13 Sep 23:37:48.015 * Starting BGSAVE for SYNC
+[1358] 13 Sep 23:37:48.015 * Full resync from master: 73a7c67a96e9db55d9ed40940c8f512b0e809fd8:1
+[1356] 13 Sep 23:37:48.015 * Background saving started by pid 1360
+[1360] 13 Sep 23:37:48.015 * DB saved on disk
+[1356] 13 Sep 23:37:48.115 * Background saving terminated with success
+[1356] 13 Sep 23:37:48.115 * Synchronization with slave succeeded
+[1358] 13 Sep 23:37:48.115 * MASTER <-> SLAVE sync: receiving 18 bytes from master
+[1358] 13 Sep 23:37:48.116 * MASTER <-> SLAVE sync: Flushing old data
+[1358] 13 Sep 23:37:48.116 * MASTER <-> SLAVE sync: Loading DB in memory
+[1358] 13 Sep 23:37:48.116 * MASTER <-> SLAVE sync: Finished with success
+[1356] 14 Sep 05:55:04.604 # Disconnecting timedout slave: 127.0.0.1:6381
+[1356] 14 Sep 05:55:04.604 # Connection with slave 127.0.0.1:6381 lost.
+[1358] 14 Sep 05:55:04.606 # Connection with master lost.
+[1358] 14 Sep 05:55:04.606 * Caching the disconnected master state.
+[1358] 14 Sep 05:55:04.804 * Connecting to MASTER 127.0.0.1:6379
+[1358] 14 Sep 05:55:04.804 * MASTER <-> SLAVE sync started
+[1358] 14 Sep 05:55:04.804 * Non blocking connect for SYNC fired the event.
+[1358] 14 Sep 05:55:04.804 * Master replied to PING, replication can continue...
+[1358] 14 Sep 05:55:04.804 * Trying a partial resynchronization (request 73a7c67a96e9db55d9ed40940c8f512b0e809fd8:12378).
+[1356] 14 Sep 05:55:04.805 * Slave asks for synchronization
+[1356] 14 Sep 05:55:04.805 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 12378.
+[1358] 14 Sep 05:55:04.805 * Successful partial resynchronization with master.
+[1358] 14 Sep 05:55:04.805 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[1358] 14 Sep 08:43:54.100 # MASTER timeout: no data nor PING received...
+[1358] 14 Sep 08:43:54.138 # Connection with master lost.
+[1358] 14 Sep 08:43:54.138 * Caching the disconnected master state.
+[1358] 14 Sep 08:43:54.138 * Connecting to MASTER 127.0.0.1:6379
+[1356] 14 Sep 08:43:54.138 # Connection with slave 127.0.0.1:6381 lost.
+[1358] 14 Sep 08:43:54.138 * MASTER <-> SLAVE sync started
+[1358] 14 Sep 08:43:54.139 * Non blocking connect for SYNC fired the event.
+[1358] 14 Sep 08:43:54.139 * Master replied to PING, replication can continue...
+[1358] 14 Sep 08:43:54.139 * Trying a partial resynchronization (request 73a7c67a96e9db55d9ed40940c8f512b0e809fd8:12420).
+[1356] 14 Sep 08:43:54.139 * Slave asks for synchronization
+[1356] 14 Sep 08:43:54.139 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 12420.
+[1358] 14 Sep 08:43:54.139 * Successful partial resynchronization with master.
+[1358] 14 Sep 08:43:54.139 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[1356] 14 Sep 09:38:33.302 # Disconnecting timedout slave: 127.0.0.1:6381
+[1356] 14 Sep 09:38:33.303 # Connection with slave 127.0.0.1:6381 lost.
+[1358] 14 Sep 09:38:33.303 # Connection with master lost.
+[1358] 14 Sep 09:38:33.303 * Caching the disconnected master state.
+[1358] 14 Sep 09:38:33.604 * Connecting to MASTER 127.0.0.1:6379
+[1358] 14 Sep 09:38:33.605 * MASTER <-> SLAVE sync started
+[1358] 14 Sep 09:38:33.605 * Non blocking connect for SYNC fired the event.
+[1358] 14 Sep 09:38:33.606 * Master replied to PING, replication can continue...
+[1358] 14 Sep 09:38:33.608 * Trying a partial resynchronization (request 73a7c67a96e9db55d9ed40940c8f512b0e809fd8:14268).
+[1356] 14 Sep 09:38:33.608 * Slave asks for synchronization
+[1356] 14 Sep 09:38:33.609 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 14268.
+[1358] 14 Sep 09:38:33.609 * Successful partial resynchronization with master.
+[1358] 14 Sep 09:38:33.610 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[1356] 14 Sep 13:27:22.202 # Disconnecting timedout slave: 127.0.0.1:6381
+[1356] 14 Sep 13:27:22.202 # Connection with slave 127.0.0.1:6381 lost.
+[1358] 14 Sep 13:27:22.202 # Connection with master lost.
+[1358] 14 Sep 13:27:22.202 * Caching the disconnected master state.
+[1358] 14 Sep 13:27:22.504 * Connecting to MASTER 127.0.0.1:6379
+[1358] 14 Sep 13:27:22.504 * MASTER <-> SLAVE sync started
+[1358] 14 Sep 13:27:22.504 * Non blocking connect for SYNC fired the event.
+[1358] 14 Sep 13:27:22.505 * Master replied to PING, replication can continue...
+[1358] 14 Sep 13:27:22.505 * Trying a partial resynchronization (request 73a7c67a96e9db55d9ed40940c8f512b0e809fd8:27498).
+[1356] 14 Sep 13:27:22.505 * Slave asks for synchronization
+[1356] 14 Sep 13:27:22.505 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 27498.
+[1358] 14 Sep 13:27:22.505 * Successful partial resynchronization with master.
+[1358] 14 Sep 13:27:22.505 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[1358] 14 Sep 14:54:40.688 # MASTER timeout: no data nor PING received...
+[1358] 14 Sep 14:54:40.854 # Connection with master lost.
+[1358] 14 Sep 14:54:40.890 * Caching the disconnected master state.
+[1358] 14 Sep 14:54:40.922 * Connecting to MASTER 127.0.0.1:6379
+[1358] 14 Sep 14:54:40.939 * MASTER <-> SLAVE sync started
+[1356] 14 Sep 14:54:40.940 # Connection with slave 127.0.0.1:6381 lost.
+[1358] 14 Sep 14:54:40.957 * Non blocking connect for SYNC fired the event.
+[1358] 14 Sep 14:54:40.990 * Master replied to PING, replication can continue...
+[1358] 14 Sep 14:54:41.161 * Trying a partial resynchronization (request 73a7c67a96e9db55d9ed40940c8f512b0e809fd8:27554).
+[1356] 14 Sep 14:54:41.203 * Slave asks for synchronization
+[1356] 14 Sep 14:54:41.234 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 27554.
+[1358] 14 Sep 14:54:41.246 * Successful partial resynchronization with master.
+[1358] 14 Sep 14:54:41.252 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[[13581356 | signal handler] ( | signal handler] (14106940111410694011) ) Received SIGTERM, scheduling shutdown...Received SIGTERM, scheduling shutdown...
+
+[1356] 14 Sep 16:56:51.684 # User requested shutdown...
+[1358] 14 Sep 16:56:51.684 # User requested shutdown...
+[1356] 14 Sep 16:56:51.684 * Saving the final RDB snapshot before exiting.
+[1358] 14 Sep 16:56:51.686 * Saving the final RDB snapshot before exiting.
+[1356] 14 Sep 16:56:51.689 * DB saved on disk
+[1356] 14 Sep 16:56:51.689 * Removing the pid file.
+[1356] 14 Sep 16:56:51.689 # Redis is now ready to exit, bye bye...
+[1358] 14 Sep 16:56:51.689 * DB saved on disk
+[1358] 14 Sep 16:56:51.689 * Removing the pid file.
+[1358] 14 Sep 16:56:51.690 # Redis is now ready to exit, bye bye...
+[2524] 14 Sep 17:03:48.652 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.13 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 2524
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[2524] 14 Sep 17:03:48.659 # Server started, Redis version 2.8.13
+[2524] 14 Sep 17:03:48.659 * DB loaded from disk: 0.000 seconds
+[2524] 14 Sep 17:03:48.659 * The server is now ready to accept connections on port 6379
+[2526] 14 Sep 17:03:48.660 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.13 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 2526
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[2526] 14 Sep 17:03:48.662 # Server started, Redis version 2.8.13
+[2526] 14 Sep 17:03:48.662 * DB loaded from disk: 0.000 seconds
+[2526] 14 Sep 17:03:48.662 * The server is now ready to accept connections on port 6381
+[2526] 14 Sep 17:03:48.662 * Connecting to MASTER 127.0.0.1:6379
+[2526] 14 Sep 17:03:48.662 * MASTER <-> SLAVE sync started
+[2526] 14 Sep 17:03:48.662 * Non blocking connect for SYNC fired the event.
+[2526] 14 Sep 17:03:48.663 * Master replied to PING, replication can continue...
+[2526] 14 Sep 17:03:48.663 * Partial resynchronization not possible (no cached master)
+[2524] 14 Sep 17:03:48.663 * Slave asks for synchronization
+[2524] 14 Sep 17:03:48.663 * Full resync requested by slave.
+[2524] 14 Sep 17:03:48.663 * Starting BGSAVE for SYNC
+[2526] 14 Sep 17:03:48.663 * Full resync from master: 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:1
+[2524] 14 Sep 17:03:48.664 * Background saving started by pid 2528
+[2528] 14 Sep 17:03:48.664 * DB saved on disk
+[2524] 14 Sep 17:03:48.763 * Background saving terminated with success
+[2524] 14 Sep 17:03:48.763 * Synchronization with slave succeeded
+[2526] 14 Sep 17:03:48.763 * MASTER <-> SLAVE sync: receiving 18 bytes from master
+[2526] 14 Sep 17:03:48.764 * MASTER <-> SLAVE sync: Flushing old data
+[2526] 14 Sep 17:03:48.764 * MASTER <-> SLAVE sync: Loading DB in memory
+[2526] 14 Sep 17:03:48.764 * MASTER <-> SLAVE sync: Finished with success
+[2524] 14 Sep 20:03:21.293 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 14 Sep 20:03:21.293 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 14 Sep 20:03:21.294 # Connection with master lost.
+[2526] 14 Sep 20:03:21.294 * Caching the disconnected master state.
+[2526] 14 Sep 20:03:21.394 * Connecting to MASTER 127.0.0.1:6379
+[2526] 14 Sep 20:03:21.394 * MASTER <-> SLAVE sync started
+[2526] 14 Sep 20:03:21.394 * Non blocking connect for SYNC fired the event.
+[2526] 14 Sep 20:03:21.394 * Master replied to PING, replication can continue...
+[2526] 14 Sep 20:03:21.394 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:9102).
+[2524] 14 Sep 20:03:21.394 * Slave asks for synchronization
+[2524] 14 Sep 20:03:21.394 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 9102.
+[2526] 14 Sep 20:03:21.394 * Successful partial resynchronization with master.
+[2526] 14 Sep 20:03:21.394 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 14 Sep 20:33:42.007 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 14 Sep 20:33:42.008 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 14 Sep 20:33:42.009 # Connection with master lost.
+[2526] 14 Sep 20:33:42.009 * Caching the disconnected master state.
+[2526] 14 Sep 20:33:42.088 * Connecting to MASTER 127.0.0.1:6379
+[2526] 14 Sep 20:33:42.090 * MASTER <-> SLAVE sync started
+[2526] 14 Sep 20:33:42.091 * Non blocking connect for SYNC fired the event.
+[2526] 14 Sep 20:33:42.091 * Master replied to PING, replication can continue...
+[2526] 14 Sep 20:33:42.091 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:9102).
+[2524] 14 Sep 20:33:42.092 * Slave asks for synchronization
+[2524] 14 Sep 20:33:42.092 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 9102.
+[2526] 14 Sep 20:33:42.092 * Successful partial resynchronization with master.
+[2526] 14 Sep 20:33:42.092 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 14 Sep 21:11:12.000 # Disconnecting timedout slave: 127.0.0.1:6381
+[2526] 14 Sep 21:11:12.100 # MASTER timeout: no data nor PING received...
+[2524] 14 Sep 21:11:12.200 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 14 Sep 21:11:12.200 # Connection with master lost.
+[2526] 14 Sep 21:11:12.200 * Caching the disconnected master state.
+[2526] 14 Sep 21:11:12.203 * Connecting to MASTER 127.0.0.1:6379
+[2526] 14 Sep 21:11:12.203 * MASTER <-> SLAVE sync started
+[2526] 14 Sep 21:11:12.203 * Non blocking connect for SYNC fired the event.
+[2526] 14 Sep 21:11:12.203 * Master replied to PING, replication can continue...
+[2526] 14 Sep 21:11:12.203 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:11846).
+[2524] 14 Sep 21:11:12.203 * Slave asks for synchronization
+[2524] 14 Sep 21:11:12.204 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 11846.
+[2526] 14 Sep 21:11:12.204 * Successful partial resynchronization with master.
+[2526] 14 Sep 21:11:12.204 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 14 Sep 21:40:41.202 # Disconnecting timedout slave: 127.0.0.1:6381
+[2526] 14 Sep 21:40:41.202 # MASTER timeout: no data nor PING received...
+[2524] 14 Sep 21:40:41.202 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 14 Sep 21:40:41.202 # Connection with master lost.
+[2526] 14 Sep 21:40:41.202 * Caching the disconnected master state.
+[2526] 14 Sep 21:40:41.203 * Connecting to MASTER 127.0.0.1:6379
+[2526] 14 Sep 21:40:41.203 * MASTER <-> SLAVE sync started
+[2526] 14 Sep 21:40:41.203 * Non blocking connect for SYNC fired the event.
+[2526] 14 Sep 21:40:41.203 * Master replied to PING, replication can continue...
+[2526] 14 Sep 21:40:41.203 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:12980).
+[2524] 14 Sep 21:40:41.203 * Slave asks for synchronization
+[2524] 14 Sep 21:40:41.204 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 12980.
+[2526] 14 Sep 21:40:41.204 * Successful partial resynchronization with master.
+[2526] 14 Sep 21:40:41.204 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 15 Sep 01:49:16.904 # MASTER timeout: no data nor PING received...
+[2526] 15 Sep 01:49:16.904 # Connection with master lost.
+[2526] 15 Sep 01:49:17.001 * Caching the disconnected master state.
+[2524] 15 Sep 01:49:17.007 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 15 Sep 01:49:17.021 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 01:49:17.021 * Connecting to MASTER 127.0.0.1:6379
+[2526] 15 Sep 01:49:17.021 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 01:49:17.021 * Non blocking connect for SYNC fired the event.
+[2526] 15 Sep 01:49:17.021 * Master replied to PING, replication can continue...
+[2526] 15 Sep 01:49:17.021 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:27876).
+[2524] 15 Sep 01:49:17.021 * Slave asks for synchronization
+[2524] 15 Sep 01:49:17.021 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 27876.
+[2526] 15 Sep 01:49:17.021 * Successful partial resynchronization with master.
+[2526] 15 Sep 01:49:17.021 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 15 Sep 06:27:50.052 # MASTER timeout: no data nor PING received...
+[2526] 15 Sep 06:27:50.053 # Connection with master lost.
+[2526] 15 Sep 06:27:50.053 * Caching the disconnected master state.
+[2526] 15 Sep 06:27:50.053 * Connecting to MASTER 127.0.0.1:6379
+[2526] 15 Sep 06:27:50.054 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 06:27:50.054 * Non blocking connect for SYNC fired the event.
+[2524] 15 Sep 06:27:50.054 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 06:27:50.055 * Master replied to PING, replication can continue...
+[2526] 15 Sep 06:27:50.056 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:27890).
+[2524] 15 Sep 06:27:50.056 * Slave asks for synchronization
+[2524] 15 Sep 06:27:50.056 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 27890.
+[2526] 15 Sep 06:27:50.056 * Successful partial resynchronization with master.
+[2526] 15 Sep 06:27:50.056 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 15 Sep 09:12:36.602 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 15 Sep 09:12:36.603 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 09:12:36.603 # Connection with master lost.
+[2526] 15 Sep 09:12:36.603 * Caching the disconnected master state.
+[2526] 15 Sep 09:12:37.130 * Connecting to MASTER 127.0.0.1:6379
+[2526] 15 Sep 09:12:37.130 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 09:12:37.130 * Non blocking connect for SYNC fired the event.
+[2526] 15 Sep 09:12:37.130 * Master replied to PING, replication can continue...
+[2526] 15 Sep 09:12:37.130 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:39454).
+[2524] 15 Sep 09:12:37.131 * Slave asks for synchronization
+[2524] 15 Sep 09:12:37.131 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 39454.
+[2526] 15 Sep 09:12:37.131 * Successful partial resynchronization with master.
+[2526] 15 Sep 09:12:37.131 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 15 Sep 09:16:26.200 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 15 Sep 09:16:26.200 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 09:16:26.200 # Connection with master lost.
+[2526] 15 Sep 09:16:26.200 * Caching the disconnected master state.
+[2526] 15 Sep 09:16:26.502 * Connecting to MASTER 127.0.0.1:6379
+[2526] 15 Sep 09:16:26.502 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 09:16:26.502 * Non blocking connect for SYNC fired the event.
+[2526] 15 Sep 09:16:26.503 * Master replied to PING, replication can continue...
+[2526] 15 Sep 09:16:26.503 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:39454).
+[2524] 15 Sep 09:16:26.503 * Slave asks for synchronization
+[2524] 15 Sep 09:16:26.503 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 39454.
+[2526] 15 Sep 09:16:26.503 * Successful partial resynchronization with master.
+[2526] 15 Sep 09:16:26.503 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 15 Sep 09:54:13.200 # MASTER timeout: no data nor PING received...
+[2526] 15 Sep 09:54:13.200 # Connection with master lost.
+[2526] 15 Sep 09:54:13.200 * Caching the disconnected master state.
+[2526] 15 Sep 09:54:13.201 * Connecting to MASTER 127.0.0.1:6379
+[2524] 15 Sep 09:54:13.201 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 09:54:13.201 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 09:54:13.201 * Non blocking connect for SYNC fired the event.
+[2526] 15 Sep 09:54:13.201 * Master replied to PING, replication can continue...
+[2526] 15 Sep 09:54:13.201 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:39468).
+[2524] 15 Sep 09:54:13.201 * Slave asks for synchronization
+[2524] 15 Sep 09:54:13.201 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 39468.
+[2526] 15 Sep 09:54:13.201 * Successful partial resynchronization with master.
+[2526] 15 Sep 09:54:13.206 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 15 Sep 20:04:13.503 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 15 Sep 20:04:13.504 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 20:04:13.504 # Connection with master lost.
+[2526] 15 Sep 20:04:13.504 * Caching the disconnected master state.
+[2526] 15 Sep 20:04:13.603 * Connecting to MASTER 127.0.0.1:6379
+[2526] 15 Sep 20:04:13.604 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 20:04:13.604 * Non blocking connect for SYNC fired the event.
+[2526] 15 Sep 20:04:13.604 * Master replied to PING, replication can continue...
+[2526] 15 Sep 20:04:13.605 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:85038).
+[2524] 15 Sep 20:04:13.605 * Slave asks for synchronization
+[2524] 15 Sep 20:04:13.605 * Partial resynchronization request accepted. Sending 14 bytes of backlog starting from offset 85038.
+[2526] 15 Sep 20:04:13.605 * Successful partial resynchronization with master.
+[2526] 15 Sep 20:04:13.605 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 15 Sep 21:35:28.102 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 15 Sep 21:35:28.157 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 15 Sep 21:35:28.157 # Connection with master lost.
+[2526] 15 Sep 21:35:28.159 * Caching the disconnected master state.
+[2526] 15 Sep 21:35:28.504 * Connecting to MASTER 127.0.0.1:6379
+[2526] 15 Sep 21:35:28.505 * MASTER <-> SLAVE sync started
+[2526] 15 Sep 21:35:28.505 * Non blocking connect for SYNC fired the event.
+[2526] 15 Sep 21:35:28.505 * Master replied to PING, replication can continue...
+[2526] 15 Sep 21:35:28.505 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:92500).
+[2524] 15 Sep 21:35:28.506 * Slave asks for synchronization
+[2524] 15 Sep 21:35:28.506 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 92500.
+[2526] 15 Sep 21:35:28.506 * Successful partial resynchronization with master.
+[2526] 15 Sep 21:35:28.506 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 16 Sep 03:12:28.803 # MASTER timeout: no data nor PING received...
+[2524] 16 Sep 03:12:28.803 # Disconnecting timedout slave: 127.0.0.1:6381
+[2526] 16 Sep 03:12:28.805 # Connection with master lost.
+[2524] 16 Sep 03:12:28.805 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 03:12:28.805 * Caching the disconnected master state.
+[2526] 16 Sep 03:12:28.805 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 03:12:28.805 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 03:12:28.805 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 03:12:28.805 * Master replied to PING, replication can continue...
+[2526] 16 Sep 03:12:28.806 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:108754).
+[2524] 16 Sep 03:12:28.806 * Slave asks for synchronization
+[2524] 16 Sep 03:12:28.806 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 108754.
+[2526] 16 Sep 03:12:28.806 * Successful partial resynchronization with master.
+[2526] 16 Sep 03:12:28.806 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 16 Sep 07:12:10.101 # Disconnecting timedout slave: 127.0.0.1:6381
+[2526] 16 Sep 07:12:10.101 # MASTER timeout: no data nor PING received...
+[2524] 16 Sep 07:12:10.101 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 07:12:10.144 # Connection with master lost.
+[2526] 16 Sep 07:12:10.144 * Caching the disconnected master state.
+[2526] 16 Sep 07:12:10.144 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 07:12:10.144 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 07:12:10.144 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 07:12:10.144 * Master replied to PING, replication can continue...
+[2526] 16 Sep 07:12:10.144 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:108796).
+[2524] 16 Sep 07:12:10.144 * Slave asks for synchronization
+[2524] 16 Sep 07:12:10.144 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 108796.
+[2526] 16 Sep 07:12:10.144 * Successful partial resynchronization with master.
+[2526] 16 Sep 07:12:10.145 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 16 Sep 07:38:04.303 # MASTER timeout: no data nor PING received...
+[2524] 16 Sep 07:38:04.303 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 16 Sep 07:38:04.304 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 07:38:04.304 # Connection with master lost.
+[2526] 16 Sep 07:38:04.304 * Caching the disconnected master state.
+[2526] 16 Sep 07:38:04.304 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 07:38:04.304 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 07:38:04.304 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 07:38:04.304 * Master replied to PING, replication can continue...
+[2526] 16 Sep 07:38:04.304 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:108866).
+[2524] 16 Sep 07:38:04.304 * Slave asks for synchronization
+[2524] 16 Sep 07:38:04.304 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 108866.
+[2526] 16 Sep 07:38:04.304 * Successful partial resynchronization with master.
+[2526] 16 Sep 07:38:04.304 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 16 Sep 14:25:28.305 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 16 Sep 14:25:28.306 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 14:25:28.306 # Connection with master lost.
+[2526] 16 Sep 14:25:28.306 * Caching the disconnected master state.
+[2526] 16 Sep 14:25:28.403 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 14:25:28.403 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 14:25:28.403 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 14:25:28.403 * Master replied to PING, replication can continue...
+[2526] 16 Sep 14:25:28.403 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:137006).
+[2524] 16 Sep 14:25:28.403 * Slave asks for synchronization
+[2524] 16 Sep 14:25:28.403 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 137006.
+[2526] 16 Sep 14:25:28.403 * Successful partial resynchronization with master.
+[2526] 16 Sep 14:25:28.403 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 16 Sep 16:33:18.655 # MASTER timeout: no data nor PING received...
+[2526] 16 Sep 16:33:18.665 # Connection with master lost.
+[2526] 16 Sep 16:33:18.665 * Caching the disconnected master state.
+[2526] 16 Sep 16:33:18.668 * Connecting to MASTER 127.0.0.1:6379
+[2524] 16 Sep 16:33:18.668 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 16:33:18.670 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 16:33:18.672 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 16:33:18.675 * Master replied to PING, replication can continue...
+[2526] 16 Sep 16:33:18.679 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:137048).
+[2524] 16 Sep 16:33:18.682 * Slave asks for synchronization
+[2524] 16 Sep 16:33:18.687 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 137048.
+[2526] 16 Sep 16:33:18.687 * Successful partial resynchronization with master.
+[2526] 16 Sep 16:33:18.721 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 16 Sep 17:11:07.601 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 16 Sep 17:11:07.602 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 17:11:07.602 # Connection with master lost.
+[2526] 16 Sep 17:11:07.602 * Caching the disconnected master state.
+[2526] 16 Sep 17:11:07.902 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 17:11:07.903 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 17:11:07.903 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 17:11:07.903 * Master replied to PING, replication can continue...
+[2526] 16 Sep 17:11:07.903 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:139134).
+[2524] 16 Sep 17:11:07.903 * Slave asks for synchronization
+[2524] 16 Sep 17:11:07.903 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 139134.
+[2526] 16 Sep 17:11:07.903 * Successful partial resynchronization with master.
+[2526] 16 Sep 17:11:07.903 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 16 Sep 22:22:14.201 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 16 Sep 22:22:14.213 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 22:22:14.219 # Connection with master lost.
+[2526] 16 Sep 22:22:14.219 * Caching the disconnected master state.
+[2526] 16 Sep 22:22:14.905 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 22:22:14.905 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 22:22:14.905 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 22:22:14.905 * Master replied to PING, replication can continue...
+[2526] 16 Sep 22:22:14.905 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:159266).
+[2524] 16 Sep 22:22:14.905 * Slave asks for synchronization
+[2524] 16 Sep 22:22:14.905 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 159266.
+[2526] 16 Sep 22:22:14.905 * Successful partial resynchronization with master.
+[2526] 16 Sep 22:22:14.905 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2524] 16 Sep 22:34:10.310 # Disconnecting timedout slave: 127.0.0.1:6381
+[2524] 16 Sep 22:34:10.442 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 16 Sep 22:34:10.501 # Connection with master lost.
+[2526] 16 Sep 22:34:10.505 * Caching the disconnected master state.
+[2526] 16 Sep 22:34:10.831 * Connecting to MASTER 127.0.0.1:6379
+[2526] 16 Sep 22:34:10.832 * MASTER <-> SLAVE sync started
+[2526] 16 Sep 22:34:10.833 * Non blocking connect for SYNC fired the event.
+[2526] 16 Sep 22:34:10.835 * Master replied to PING, replication can continue...
+[2526] 16 Sep 22:34:10.835 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:159266).
+[2524] 16 Sep 22:34:10.835 * Slave asks for synchronization
+[2524] 16 Sep 22:34:10.837 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 159266.
+[2526] 16 Sep 22:34:10.837 * Successful partial resynchronization with master.
+[2526] 16 Sep 22:34:10.837 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 17 Sep 05:00:37.306 # MASTER timeout: no data nor PING received...
+[2526] 17 Sep 05:00:37.308 # Connection with master lost.
+[2526] 17 Sep 05:00:37.308 * Caching the disconnected master state.
+[2526] 17 Sep 05:00:37.308 * Connecting to MASTER 127.0.0.1:6379
+[2524] 17 Sep 05:00:37.309 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 17 Sep 05:00:37.309 * MASTER <-> SLAVE sync started
+[2526] 17 Sep 05:00:37.309 * Non blocking connect for SYNC fired the event.
+[2526] 17 Sep 05:00:37.309 * Master replied to PING, replication can continue...
+[2526] 17 Sep 05:00:37.309 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:171530).
+[2524] 17 Sep 05:00:37.309 * Slave asks for synchronization
+[2524] 17 Sep 05:00:37.309 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 171530.
+[2526] 17 Sep 05:00:37.309 * Successful partial resynchronization with master.
+[2526] 17 Sep 05:00:37.309 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 17 Sep 07:08:59.481 # MASTER timeout: no data nor PING received...
+[2526] 17 Sep 07:08:59.486 # Connection with master lost.
+[2526] 17 Sep 07:08:59.488 * Caching the disconnected master state.
+[2526] 17 Sep 07:08:59.492 * Connecting to MASTER 127.0.0.1:6379
+[2526] 17 Sep 07:08:59.495 * MASTER <-> SLAVE sync started
+[2524] 17 Sep 07:08:59.496 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 17 Sep 07:08:59.500 * Non blocking connect for SYNC fired the event.
+[2526] 17 Sep 07:08:59.519 * Master replied to PING, replication can continue...
+[2526] 17 Sep 07:08:59.519 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:171600).
+[2524] 17 Sep 07:08:59.523 * Slave asks for synchronization
+[2524] 17 Sep 07:08:59.526 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 171600.
+[2526] 17 Sep 07:08:59.526 * Successful partial resynchronization with master.
+[2526] 17 Sep 07:08:59.547 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.
+[2526] 17 Sep 09:16:32.201 # MASTER timeout: no data nor PING received...
+[2526] 17 Sep 09:16:32.205 # Connection with master lost.
+[2526] 17 Sep 09:16:32.205 * Caching the disconnected master state.
+[2526] 17 Sep 09:16:32.205 * Connecting to MASTER 127.0.0.1:6379
+[2524] 17 Sep 09:16:32.205 # Connection with slave 127.0.0.1:6381 lost.
+[2526] 17 Sep 09:16:32.205 * MASTER <-> SLAVE sync started
+[2526] 17 Sep 09:16:32.206 * Non blocking connect for SYNC fired the event.
+[2526] 17 Sep 09:16:32.206 * Master replied to PING, replication can continue...
+[2526] 17 Sep 09:16:32.206 * Trying a partial resynchronization (request 4ef2129c0ad5fd7c4d504ac1e66d3921ba2ae53f:178936).
+[2524] 17 Sep 09:16:32.206 * Slave asks for synchronization
+[2524] 17 Sep 09:16:32.206 * Partial resynchronization request accepted. Sending 0 bytes of backlog starting from offset 178936.
+[2526] 17 Sep 09:16:32.206 * Successful partial resynchronization with master.
+[2526] 17 Sep 09:16:32.206 * MASTER <-> SLAVE sync: Master accepted a Partial Resynchronization.

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>navigator.connection.type Example</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+    // Wait for Cordova to load
+    // 
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+
+    function onDeviceReady() {
+        console.log("Device is ready....");
+
+        console.log("Going to initialize bluetoothle");
+        bluetoothle.initialize(initializeSuccess, initializeError);
+    }
+
+
+    var addressKey = "address";
+
+    var heartRateServiceUuid = "180d";
+    var heartRateMeasurementCharacteristicUuid = "2a37";
+    var clientCharacteristicConfigDescriptorUuid = "2902";
+    var batteryServiceUuid = "180f";
+    var batteryLevelCharacteristicUuid = "2a19";
+
+    var scanTimer = null;
+    var connectTimer = null;
+    var reconnectTimer = null;
+
+    var iOSPlatform = "iOS";
+    var androidPlatform = "Android";
+
+
+    var BLE_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+    var BLE_TRANSMISSION_CHARACTERSTIC_UUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+    var BLE_RECEIVE_CHARACTERSTIC_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
+
+
+    function initializeSuccess(obj) {
+        console.log("Inside initializeSuccess");
+        console.log(obj);
+
+        if (obj.status == "enabled") {
+
+            console.log("Bluetooth initialized successfully, starting scan for devices.");
+            var paramsObj = {
+                "serviceUuids": []
+            };
+            bluetoothle.startScan(startScanSuccess, startScanError, paramsObj);
+
+            // if you want to directly connect to the device, without scanning        
+            // var ble_address = "3B204569-899A-BF4B-5C5C-3A35515211DF";
+            // console.log("Directly initiating connection with Adafruit BLE");
+            // connectDevice(ble_address);
+
+        } else {
+            console.log("Unexpected initialize status: " + obj.status);
+        }
+    }
+
+    function initializeError(obj) {
+        console.log("Initialize error: " + obj.error + " - " + obj.message);
+    }
+
+    function startScanSuccess(obj) {
+        console.log("INSIDE startScanSuccess .....");
+        console.log(obj);
+
+        if (obj.status == "scanResult") {
+            // console.log("Stopping scan..");
+            // bluetoothle.stopScan(stopScanSuccess, stopScanError);
+            // clearScanTimeout();
+
+            console.log("I am connecting to my TI Sensor");
+
+            console.log("Stopping scan..");
+            bluetoothle.stopScan(stopScanSuccess, stopScanError);
+            connectDevice(obj.address);
+        } else if (obj.status == "scanStarted") {
+            console.log("Scan was started successfully, stopping in 10");
+            // scanTimer = setTimeout(scanTimeout, 10000);
+        } else {
+            console.log("Unexpected start scan status: " + obj.status);
+        }
+    }
+
+    function startScanError(obj) {
+        console.log("Start scan error: " + obj.error + " - " + obj.message);
+    }
+
+
+    function stopScanSuccess(obj) {
+        if (obj.status == "scanStopped") {
+            console.log("Scan was stopped successfully");
+        } else {
+            console.log("Unexpected stop scan status: " + obj.status);
+        }
+    }
+
+    function stopScanError(obj) {
+        console.log("Stop scan error: " + obj.error + " - " + obj.message);
+    }
+
+    function connectDevice(address) {
+        console.log("Begining connection to: " + address + " with 5 second timeout");
+        var paramsObj = {
+            "address": address
+        };
+        bluetoothle.connect(connectSuccess, connectError, paramsObj);
+        // connectTimer = setTimeout(connectTimeout, 5000);
+    }
+
+
+    function connectSuccess(obj) {
+        console.log("Inside connectSuccess");
+        console.log(obj);
+
+        if (obj.status == "connected") {
+            console.log("Connected to : " + obj.name + " - " + obj.address);
+
+            console.log("Discovering service");
+            var paramsObj = {
+                "serviceUuids": []
+            };
+            bluetoothle.services(servicesSuccess, servicesError, paramsObj);
+
+
+            // console.log("NOW I AM CONNECTED, I WILL DIRECTLY READ Descriptors");
+            // var paramsObj = {
+            //     "serviceUuid": "6e400001-b5a3-f393-e0a9-e50e24dcca9e", 
+            //     "characteristicUuid": "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+            // };
+            // bluetoothle.descriptors(descriptorsSuccess, descriptorsError, paramsObj);
+
+
+        } else if (obj.status == "connecting") {
+            console.log("Connecting to : " + obj.name + " - " + obj.address);
+        } else {
+            console.log("Unexpected connect status: " + obj.status);
+            // clearConnectTimeout();
+        }
+    }
+
+
+
+    function servicesSuccess(obj) {
+        console.log("inside servicesSuccess");
+        console.log(obj);
+        if (obj.status == "discoveredServices") {
+            var serviceUuids = obj.serviceUuids;
+            for (var i = 0; i < serviceUuids.length; i++) {
+                var serviceUuid = serviceUuids[i];
+                console.log("serviceUuid --->", serviceUuid);
+
+                // var ble_service_uuid = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+
+                var accel_uuid = "f000aa10-0451-4000-b000-000000000000";
+
+                if (serviceUuid === accel_uuid) {
+                    console.log("Finding ble_service characteristics");
+                    var paramsObj = {
+                        "serviceUuid": accel_uuid,
+                        "characteristicUuids": []
+                    };
+                    bluetoothle.characteristics(characteristicsSuccess, characteristicsError, paramsObj);
+                    return;
+                }
+            }
+        } else {
+            console.log("Unexpected services status: " + obj.status);
+        }
+    }
+
+
+    function characteristicsSuccess(obj) {
+
+        console.log("inside characteristicsSuccess");
+        console.log(obj);
+
+        if (obj.status == "discoveredCharacteristics") {
+
+            var characteristicUuids = obj.characteristicUuids;
+            for (var i = 0; i < characteristicUuids.length; i++) {
+
+                var characteristicUuid = characteristicUuids[i];
+                console.log("Characteristics found ####", characteristicUuid);
+
+
+                if (characteristicUuid === "f000aa11-0451-4000-b000-000000000000") {
+                    var paramsObj = {
+                        "serviceUuid": "f000aa10-0451-4000-b000-000000000000",
+                        "characteristicUuid": "f000aa11-0451-4000-b000-000000000000"
+                    };
+                    bluetoothle.descriptors(descriptorsSuccess, descriptorsError, paramsObj);
+                    return;
+                }
+            }
+
+            console.log("I HAVE REACHED HERE...");
+        } else {
+            console.log("Unexpected characteristics status: " + obj.status);
+        }
+    }
+
+
+    // {"status":"discoveredCharacteristics","name":"UART","characteristicUuids":["6e400002-b5a3-f393-e0a9-e50e24dcca9e","6e400003-b5a3-f393-e0a9-e50e24dcca9e"],"serviceUuid":"6e400001-b5a3-f393-e0a9-e50e24dcca9e","address":"3B204569-899A-BF4B-5C5C-3A35515211DF"}
+
+
+
+
+    function writeSuccessCallback(obj) {
+        console.log("inside writeSuccessCallback");
+        console.log(obj);
+
+    }
+
+    function writeErrorCallback(obj) {
+        console.log("inside writeErrorCallback");
+        console.log(obj);
+    }
+
+
+
+    function characteristicsError(obj) {
+        console.log("Characteristics heart error: " + obj.error + " - " + obj.message);
+        // disconnectDevice();
+    }
+
+
+    function descriptorsSuccess(obj) {
+        console.log("inside descriptorsSuccess");
+        console.log(obj);
+
+        if (obj.status == "discoveredDescriptors") {
+
+            console.log("Discovered descriptors");
+
+            readBLE(); 
+
+        } else {
+            console.log("Unexpected descriptors  status: " + obj.status);
+            disconnectDevice();
+        }
+    }
+
+
+
+    function readBLE() {
+        console.log("inside readBLE");
+
+        var paramsObj = {
+            "serviceUuid": "f000aa10-0451-4000-b000-000000000000",
+            "characteristicUuid": "f000aa11-0451-4000-b000-000000000000",
+            "descriptorUuid": 2902
+        };
+
+        bluetoothle.read(function(e) {
+                console.log('read was a success');
+                console.log(JSON.stringify(e));
+            },
+            function(e) {
+                console.log('read was a  failure');
+                console.log(JSON.stringify(e));
+            },
+            paramsObj
+        );
+    }
+
+
+
+
+
+
+    function descriptorsError(obj) {
+        console.log("Descriptors error: " + obj.error + " - " + obj.message);
+        disconnectDevice();
+    }
+
+
+
+    function servicesError(obj) {
+        console.log("inside servicesError");
+        console.log(obj);
+    }
+
+
+    function connectError(obj) {
+        console.log("Connect error: " + obj.error + " - " + obj.message);
+        clearConnectTimeout();
+    }
+
+    function connectTimeout() {
+        console.log("Connection timed out");
+    }
+
+    function clearConnectTimeout() {
+        console.log("Clearing connect timeout");
+        if (connectTimer != null) {
+            clearTimeout(connectTimer);
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <p>This is empty screen --- hello!!!!</p>
+</body>
+
+</html>
+
+<script type="text/javascript" charset="utf-8">
+</script>

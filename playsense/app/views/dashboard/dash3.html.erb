@@ -1,0 +1,416 @@
+<div class="container-fluid">
+  
+ 	<div class="row chart_container">
+ 		<h3>Object</h3> 	
+     	<div class="col-lg-10">
+			<div id="svg_container"></div>
+     	</div>
+  	</div>
+
+ 	<div class="row chart_container">
+ 		<h3>Orientation</h3>
+     	<div class="col-lg-10">
+			<div id="chart3"></div>
+     	</div>
+  		<div class="col-lg-2">
+  			<div id="legend3"></div>  			
+  		</div>
+  	</div>  	
+
+ 	<div class="row chart_container">
+ 		<h3>Rotation</h3> 	
+     	<div class="col-lg-10">
+			<div id="chart"></div>
+     	</div>
+  		<div class="col-lg-2">
+  			<div id="legend"></div>  			
+  		</div>
+  	</div>
+
+
+ 	<div class="row chart_container">
+ 		<h3>Acceleration</h3>
+     	<div class="col-lg-10">
+			<div id="chart2"></div>
+     	</div>
+  		<div class="col-lg-2">
+  			<div id="legend2"></div>  			
+  		</div>
+  	</div>
+
+</div>
+
+
+<script>
+
+var svgContainer;
+
+function drawSVG(){
+
+	svgContainer = d3.select("#svg_container").append("svg")
+                 .attr("width",1800)
+                 .attr("height",200);
+
+	var rectangleData = [
+	   { "rx": 400, "ry": 100, "height": 50, "width": 20, "color" : "orange" },
+	   { "rx": 600, "ry": 100, "height": 50, "width": 20, "color" : "black" },
+	   { "rx": 800, "ry": 100, "height": 50, "width": 20, "color" : "brown" },
+	 ];
+
+
+
+	var rectangles = svgContainer.selectAll("rect")
+		.data(rectangleData)
+		.enter()
+		.append("rect")
+		.attr("x", function (d) { return d.rx; })
+		.attr("y", function (d) { return d.ry; })
+		.attr("height", function (d) { return d.height; })
+		.attr("width", function (d) { return d.width; })
+		.style("fill", function(d) { return d.color; });
+		;            
+}
+
+function myRotateNew(angles_array){
+	var rectangles2 = svgContainer.selectAll("rect");
+	rectangles2.forEach(function(arr){
+
+		arr.forEach(function(item, index){
+			var ang = angles_array[index];
+
+			var x = 400 + 200*index;
+			var y = 100;
+			var t = "rotate(" + ang + "," + x + ", " + y + ")";
+
+			$(item).attr("transform",t);
+		})
+	})
+}
+
+
+function myrotate(ang){
+	var rectangles2 = svgContainer.selectAll("rect");
+	rectangles2.forEach(function(arr){
+
+		arr.forEach(function(item){
+			var x = 600;
+			var y = 100;
+			var t = "rotate(" + ang + "," + x + ", " + y + ")";
+
+			$(item).attr("transform",t);
+		})
+	})
+}
+
+
+
+	// ----------------------------------------------------
+	//
+	var pointsArrayObject = function(timeInterval) {
+
+		var addDataPoint;
+		timeInterval = timeInterval || 1;
+
+		var timeBase = Math.floor(new Date().getTime() / 1000);
+
+		this.addNewDataPoint = function(data, pt_passed) {
+			var index = data[0].length;
+			data.forEach( function(series, i) {
+
+				var nx = (index * timeInterval) + timeBase;
+
+				var ny = pt_passed[i];
+
+				var pt = {};
+				pt.x = nx;
+				pt.y = ny;
+				series.push(pt)
+			} );
+		};	
+
+		this.removeData = function(data) {
+			data.forEach( function(series) {
+
+				var len = series.length;
+				if(len > 100){
+					series.shift();
+				}
+			} );
+			timeBase += timeInterval;
+		};
+	};
+
+
+	// ----------------------------------------------------
+	//
+	var playSenseObject = function() {
+
+		var _psenseObject = this;
+
+		var seriesData = [[], [], []];
+		var points_array_object = new pointsArrayObject(150);
+		var graph = null;
+
+		var origin_x = 0;
+		var origin_y = 0;
+		var origin_z = 0;
+
+		var rot_x = 0, rot_y = 0, rot_z = 0;
+
+		var value_type;
+		var chart_div, legend_div;
+
+
+		// ----------------------------------------------------
+		//
+		_psenseObject.init = function(options){
+			chart_div = options.chart_div;
+			legend_div = options.legend_div;
+			value_type = options.value_type;			
+		}
+
+
+		// ----------------------------------------------------
+		//
+		_psenseObject.drawRickshawChart = function(){
+
+			var palette = new Rickshaw.Color.Palette( { scheme: 'spectrum2000' } );
+
+			// instantiate our graph!
+
+			graph = new Rickshaw.Graph( {
+				element: document.getElementById(chart_div),
+				width: 1400,
+				height: 400,
+				renderer: 'line',
+				stroke: true,
+				preserve: true,
+				min: "auto",
+				series: [
+					{
+						color: "#FF0000",
+						data: seriesData[0],
+						name: 'X'
+					},
+					{
+						color: "#00FF00",
+						data: seriesData[1],
+						name: 'Y'
+					},
+					{
+						color: "#0000FF",
+						data: seriesData[2],
+						name: 'Z'
+					}						
+				]
+			} );
+
+
+			graph.render();
+
+			var ticksTreatment = 'glow';
+
+			// var xAxis = new Rickshaw.Graph.Axis.Time( {
+			// 	graph: graph,
+			// 	ticksTreatment: ticksTreatment,
+			// 	timeFixture: new Rickshaw.Fixtures.Time.Local()
+			// } );
+			// xAxis.render();
+
+			var yAxis = new Rickshaw.Graph.Axis.Y( {
+				graph: graph,
+				// tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+				// ticksTreatment: ticksTreatment
+			} );
+			yAxis.render();
+
+			var legend = new Rickshaw.Graph.Legend({
+			    graph: graph,
+			    element: document.querySelector(legend_div)
+			});
+
+			var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+		    	graph: graph,
+		    	legend: legend
+			});
+
+			var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
+		    	graph: graph,
+		    	legend: legend
+			});
+
+		}
+
+		// ----------------------------------------------------
+		//
+		_psenseObject.processDataReceivedOnSocket = function(data){		
+			if(value_type == "acceleration"){
+				_psenseObject.processDataReceivedOnSocket_Acceleration(data);
+			}else if(value_type == "rotation"){
+				_psenseObject.processDataReceivedOnSocket_Rotation(data);
+			}else if(value_type == "orientation"){
+				_psenseObject.processDataReceivedOnSocket_Orientation(data);
+			}	
+
+		}
+	
+
+		// ----------------------------------------------------
+		//
+		_psenseObject.processDataReceivedOnSocket_Acceleration = function(data){		
+		 	var values = data.device_motion_event.values;
+		    var acceleration = values.acceleration;
+
+		    // update rickshaw chart
+			points_array_object.removeData(seriesData);
+
+			// var pts_array = [ acceleration.x, acceleration.y, acceleration.z];
+
+			var x, y, z;
+
+			// acceleration rate
+			if ( (acceleration.x > -2) && (acceleration.x < 2) ){
+				acceleration.x = 0;
+			}
+			x = acceleration.x;
+
+			if ( (acceleration.y > -2) && (acceleration.y < 2) ){
+				acceleration.y= 0;
+			}
+			y = acceleration.y;
+
+			if ( (acceleration.z > -2) && (acceleration.z < 2) ){
+				acceleration.z = 0;
+			}
+			z = acceleration.z;
+
+			var pts_array = [ x, y, z];
+			console.log(x, y, z);
+
+			points_array_object.addNewDataPoint(seriesData, pts_array);
+
+			graph.update();
+		}
+
+
+		// ----------------------------------------------------
+		//
+		_psenseObject.processDataReceivedOnSocket_Rotation = function(data){		
+		 	var values = data.device_motion_event.values;
+		    var rotationRate = values.rotationRate;
+
+		    // update rickshaw chart
+			points_array_object.removeData(seriesData);
+
+
+			// rotation rate
+			if ( (rotationRate.alpha > -10) && (rotationRate.alpha < 10) ){
+				rotationRate.alpha = 0;
+			}
+			if(rotationRate.alpha != 0){
+				rot_x = rot_x + rotationRate.alpha;
+				if(rot_x / 360 > 1){
+					rot_x = rot_x % 360;
+				}
+			}
+
+
+			if ( (rotationRate.beta > -10) && (rotationRate.beta < 10) ){
+				rotationRate.beta = 0;
+			}
+			if(rotationRate.beta != 0){
+				rot_y = rot_y + rotationRate.beta;
+				if(rot_y / 360 > 1){
+					rot_y = rot_y % 360;
+				}
+
+			}
+
+			if ( (rotationRate.gamma > -10) && (rotationRate.gamma < 10) ){
+				rotationRate.gamma = 0;		
+			}
+			if(rotationRate.gamma != 0){
+				rot_z = rot_z + rotationRate.gamma;
+				if(rot_z / 360 > 1){
+					rot_z = rot_z % 360;
+				}		
+			}
+
+			var pts_array = [ rot_x, rot_y, rot_z];
+
+			console.log(rot_x, rot_y, rot_z);
+
+			points_array_object.addNewDataPoint(seriesData, pts_array);
+
+			graph.update();
+
+			// myrotate(rot_x);
+		}
+
+
+
+		// ----------------------------------------------------
+		//
+		_psenseObject.processDataReceivedOnSocket_Orientation = function(data){		
+			console.log(data);
+		 	var values = data.device_orientation_event.values;
+
+		    // update rickshaw chart
+			points_array_object.removeData(seriesData);
+
+			var alpha = values.alpha;
+			var beta = values.beta;
+			var gamma = values.gamma;
+
+			var pts_array = [ alpha, beta, gamma];
+			console.log(alpha, beta, gamma);
+
+			points_array_object.addNewDataPoint(seriesData, pts_array);
+
+			graph.update();
+
+			myRotateNew(pts_array);
+		}
+
+	}
+
+
+	var chart1 = new playSenseObject();
+	var options = {};
+	options.chart_div = "chart";
+	options.legend_div = "#legend";
+	options.value_type = "rotation";
+	chart1.init(options);
+	chart1.drawRickshawChart();
+
+	var chart2 = new playSenseObject();
+	var options2 = {};
+	options2.chart_div = "chart2";
+	options2.legend_div = "#legend2";
+	options2.value_type = "acceleration";
+	chart2.init(options2);
+	chart2.drawRickshawChart();
+
+
+	var chart3 = new playSenseObject();
+	var options3 = {};
+	options3.chart_div = "chart3";
+	options3.legend_div = "#legend3";
+	options3.value_type = "orientation";
+	chart3.init(options3);
+	chart3.drawRickshawChart();
+
+	global_socket.on('device_event_channel', function (data) {
+		chart1.processDataReceivedOnSocket(data);
+		chart2.processDataReceivedOnSocket(data);
+	});
+
+	global_socket.on('device_orientation_channel', function (data) {
+		chart3.processDataReceivedOnSocket(data);
+	});
+
+
+	drawSVG();
+
+
+</script>

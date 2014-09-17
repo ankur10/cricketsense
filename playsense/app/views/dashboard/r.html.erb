@@ -1,0 +1,68 @@
+    <script type='text/javascript'>
+      //<![CDATA[
+        $(function() {
+          if (window.DeviceOrientationEvent) {  
+            window.addEventListener("deviceorientation", function( event ) {  
+              if(event.absolute) {
+                $(".absolute").show();
+              } else
+              {
+                $(".absolute").hide();
+              }
+              //alpha: rotation around z-axis  
+              $(".alpha").html(event.alpha);
+        
+              //gamma: left to right  
+              $(".beta").html(event.beta);
+        
+              //beta: front back motion  
+              $(".gamma").html(event.gamma);
+              var rotation = "rotateX("+(event.beta * -1) + "deg) rotateY(" + (event.gamma) + "deg) rotateZ(" + (event.alpha * -1) + "deg)";
+        
+              $(".transform").html(rotation);
+              $("#imgLogo").css('-moz-transform',rotation);
+              $("#imgLogo").css('-webkit-transform',rotation);
+              $("#imgLogo").css('transform',rotation);
+            }, false);  
+          }  
+          if (window.DeviceMotionEvent) {  
+            window.addEventListener("devicemotion", function( event ) {  
+              // Grab the acceleration including gravity from the results
+              var acceleration = event.accelerationIncludingGravity;
+              // Display the raw acceleration data
+              var rawAcceleration = "[" +  Math.round(acceleration.x*1000) + ", " + 
+                Math.round(acceleration.y*1000) + ", " + Math.round(acceleration.z*1000) + "]";
+              $(".acceleration").html(rawAcceleration);
+            }, false);
+          }  
+        });
+      //]]>
+    </script>
+
+    <strong>Device Orientation</strong>
+    <br />
+    <div class='absolute'>
+      Absolute Coord
+    </div>
+    <br />
+    Rotate (Alpha):
+    <span class='alpha'></span>
+    <br />
+    frontToBack (Beta):
+    <span class='beta'></span>
+    <br />
+    leftToRight (Gamma):
+    <span class='gamma'></span>
+    <br />
+    <strong>Device Motion</strong>
+    <br />
+    Acceleration:
+    <span class='acceleration'></span>
+    <br />
+    Transform:
+    <span class='transform'></span>
+    <br />
+    <div class='container' style='-moz-perspective: 300; perspective: 300;'>
+      <img class='logo' id='imgLogo' src='/bat.jpg' />
+    </div>
+  
