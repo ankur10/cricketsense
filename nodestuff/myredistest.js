@@ -1,3 +1,6 @@
+var fs = require('fs');
+
+
 var REDIS_SERVER_HOST = "localhost";
 var REDIS_SERVER_PORT = 6379;
 
@@ -50,3 +53,16 @@ client1.mget(keys, function(d, v){
 		// console.log(n);
 	})
 })
+
+
+var wstream = fs.createWriteStream('myOutput.txt');
+wstream.write('1Hello world!\n');
+wstream.write('11Another line\n');
+wstream.end();
+
+
+var filename = "shot1.txt"
+
+fs.readFile(filename, function(err, data){
+	console.log(data);
+});
