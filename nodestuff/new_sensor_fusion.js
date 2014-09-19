@@ -24,7 +24,7 @@ startProcessing();
 // -------------------------------------------------
 function startProcessing() {
 
-    var filename = "shot4.csv";
+    var filename = "shot5.csv";
 
     fs.readFile(filename, 'utf8', function(err, data) {
 
@@ -54,7 +54,7 @@ function storeDataInRedis(key_name, data) {
         var x = JSON.parse(d.json_data);
         // console.log(x);
         console.log("Length --->", x.length);
-        console.log(x[0]);
+        console.log(x[5]);
 
     });
 }
@@ -214,9 +214,9 @@ function detectMotionAndProcessRawSignal(data) {
 function processRawSignalData(raw_data) {
 
     // detect motion
-    var processed_array = detectMotionAndProcessRawSignal(raw_data);
+    // var processed_array = detectMotionAndProcessRawSignal(raw_data);
 
-    // var processed_array = raw_data;
+    var processed_array = raw_data;
 
     // smooth accelerometer data
     var data_with_smooth_accelerometer_data = smoothAccelerometerData(processed_array);
@@ -225,7 +225,7 @@ function processRawSignalData(raw_data) {
     var data_with_updated_gyroscope_data = smoothGyroscopeData(processed_array, data_with_smooth_accelerometer_data);
 
     // calculate velocity, position, displacement vectors
-    var vectors_array = calculateVelocityAndDisplacementAndPositionVectors(processed_array, data_with_smooth_accelerometer_data);
+    var vectors_array = calculateVelocityAndAngularAndDisplacementAndPositionVectors(processed_array, data_with_smooth_accelerometer_data, data_with_updated_gyroscope_data);
 
     // combine all data 
     var data_hash = {}
@@ -265,6 +265,10 @@ function smoothAccelerometerData(data_array) {
     var processed_x_values = filters.median(x_values, median_window);
     var processed_y_values = filters.median(y_values, median_window);
     var processed_z_values = filters.median(z_values, median_window);
+
+    processed_x_values = x_values;
+    processed_y_values = y_values;
+    processed_z_values = z_values;
 
     var len = data_array.length;
 
@@ -306,6 +310,11 @@ function smoothGyroscopeData(data_array, smooth_accelerometer_data_array) {
     var processed_z_values = filters.median(z_values, median_window);
 
 
+    processed_x_values = x_values;
+    processed_y_values = y_values;
+    processed_z_values = z_values;
+
+
     // TO DO:
     // IMPLEMENT COMPLIMENTARY FILTER HERE
 
@@ -325,8 +334,10 @@ function smoothGyroscopeData(data_array, smooth_accelerometer_data_array) {
 }
 
 
+
+
 // -------------------------------------------------
-function calculateVelocityAndDisplacementAndPositionVectors(data_array, smooth_accelerometer_data_array) {
+function calculateVelocityAndAngularAndDisplacementAndPositionVectors(data_array, smooth_accelerometer_data_array, smooth_gyroscope_data) {
 
     var processed_array = [];
 
@@ -341,6 +352,13 @@ function calculateVelocityAndDisplacementAndPositionVectors(data_array, smooth_a
         y: 0,
         z: 0
     };
+
+    var initial_angular_position = {
+        x: 0,
+        y: 0,
+        z: 0
+    };
+
 
     var first_item = data_array.shift();
     smooth_accelerometer_data_array.shift();
@@ -374,11 +392,19 @@ function calculateVelocityAndDisplacementAndPositionVectors(data_array, smooth_a
         position_vector.z = initial_position.z + displacement_vector.z;
         position_vector = fixDecimalPlacesForAGivenVector(position_vector);
 
+        // angular position
+        var angular_vector = {};
+        angular_vector.x = initial_angular_position.x + smooth_gyroscope_data[index].x * time_delta;
+        angular_vector.y = initial_angular_position.y + smooth_gyroscope_data[index].y * time_delta;
+        angular_vector.z = initial_angular_position.z + smooth_gyroscope_data[index].z * time_delta;
+        angular_vector = fixDecimalPlacesForAGivenVector(angular_vector);
+
 
         var myhash = {};
         myhash.velocity = velocity_vector;
         myhash.displacement = displacement_vector;
         myhash.position = position_vector;
+        myhash.angular_vector = angular_vector;
 
         processed_array.push(myhash);
 
@@ -386,6 +412,7 @@ function calculateVelocityAndDisplacementAndPositionVectors(data_array, smooth_a
         starting_time_stamp = time_stamp;
         initial_velocity = velocity_vector;
         initial_position = position_vector;
+        initial_angular_position = angular_vector;
     })
 
     return processed_array;
@@ -430,6 +457,7 @@ function combineAllDataPoints(data_points_hash) {
         processed_data.velocity = various_vectors.velocity;
         processed_data.displacement = various_vectors.displacement;
         processed_data.position = various_vectors.position;
+        processed_data.angular_vector = various_vectors.angular_vector;
 
         var myhash = {};
         myhash.time_stamp = time_stamp;

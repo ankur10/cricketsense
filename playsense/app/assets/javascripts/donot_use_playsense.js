@@ -1,5 +1,6 @@
-var finalPlaySenseObject = function() {
 
+var finalPlaySenseObject = function(){
+    
     var playSenseObj = {};
 
     playSenseObj.scene = null;
@@ -8,7 +9,6 @@ var finalPlaySenseObject = function() {
     playSenseObj.ball = null;
     playSenseObj.renderer = null;
     playSenseObj.clock = null;
-    playSenseObj.axes = null;
     playSenseObj._mythisobj = null;
     playSenseObj.size = {};
 
@@ -62,17 +62,13 @@ var finalPlaySenseObject = function() {
 
         // ball
         this.ball = this.drawBall(this.scene);
-
-        // axes
-        this.axes = this.buildAxes(this.scene);
-
     }
 
 
 
     // ----------------------------------------------------
     //
-    playSenseObj.rotateBatUsingSensorData = function(sensor_data) {
+    playSenseObj.drawAndRotateBatNew = function() {
 
         var _mythisobj = this;
 
@@ -90,40 +86,30 @@ var finalPlaySenseObject = function() {
         // var points = [];
         var speed = 0.08;
 
-
-        var ctr = 0;
         all_global_points = [];
 
-        var angluar_vector_data = []
-        sensor_data.forEach(function(row) {
-            var pdata = row.processed_data;
-            angluar_vector_data.push(pdata.angular_vector);
-        });
+        var ctr = 0;
 
+        while (angle > end_rotation_angle) {
 
-        angluar_vector_data.forEach(function(row) {
             var pt = {
                 rotation: {},
                 position: {}
             };
 
-            var angle_x_rad = -1.0 * row.x * (Math.PI / 180.00);
-            var angle_y_rad = -1.0 * row.y * (Math.PI / 180.00);
-            var angle_z_rad = -1.0 * row.z * (Math.PI / 180.00);
-
             pt.rotation.x = 0;
             pt.rotation.y = 0;
-            pt.rotation.z = angle_z_rad;
+            pt.rotation.z = angle;
 
-            var x_pos = 0 + bat_height * Math.sin(angle_z_rad);
-            var y_pos = bat_height - bat_height * Math.cos(angle_z_rad);
+            var x_pos = 0 + bat_height * Math.sin(angle);
+            var y_pos = bat_height - bat_height * Math.cos(angle);
             var z_pos = 0;
 
             if (x_pos < 0) {
                 z_pos = -0.1 * ctr;
-                x_pos = -0.1 * ctr + bat_height * Math.sin(angle_z_rad);
+                x_pos = -0.1 * ctr + bat_height * Math.sin(angle);
 
-                pt.rotation.y = 0;
+                pt.rotation.y = -0.2;
             }
 
             pt.position.x = x_pos;
@@ -132,24 +118,18 @@ var finalPlaySenseObject = function() {
 
             all_global_points.push(pt);
 
+            angle = angle - 0.05;
             ctr = ctr + 1;
-
-        });
-
-
-        console.log(all_global_points);
-
-
+        }
 
         this.clock = new THREE.Clock();
-        my_new_render_func();
-
-        // setInterval(my_new_render_func, 200);
+        render_new_inline();
 
 
-        function my_new_render_func() {
+        function render_new_inline() {
 
             var delta = _mythisobj.clock.getDelta();
+
             var pt = all_global_points.shift();
 
             if (pt) {
@@ -158,122 +138,35 @@ var finalPlaySenseObject = function() {
                 _mythisobj.bat.rotation.y = pt.rotation.y;
                 _mythisobj.bat.rotation.z = pt.rotation.z;
 
+                // Absolute angle
+                var bat_rot = Math.sqrt(_mythisobj.bat.rotation.x * _mythisobj.bat.rotation.x + _mythisobj.bat.rotation.y * _mythisobj.bat.rotation.y + _mythisobj.bat.rotation.z * _mythisobj.bat.rotation.z);
+                var bat_rot_angle = bat_rot * 180 / Math.PI;
+                bat_rot_angle = bat_rot_angle.toFixed(1);
+
+                if (pt.position.x > 0) {
+                    bat_rot_angle = -1.0 * bat_rot_angle;
+                }
+
+                $("#bat_rotation_angle").html(bat_rot_angle);
+
                 _mythisobj.bat.position.x = pt.position.x;
                 _mythisobj.bat.position.y = pt.position.y;
                 _mythisobj.bat.position.z = pt.position.z;
 
+                if (pt.position.x < 0) {
+                    _mythisobj.ball.position.x = pt.position.x;
+                    _mythisobj.ball.position.y = 1;
+                    _mythisobj.ball.position.z = pt.position.z;
+                }
             }
 
             trackballControls.update(delta);
-            requestAnimationFrame(my_new_render_func);
+            requestAnimationFrame(render_new_inline);
 
             _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
+
         }
     }
-
-
-
-    // // ----------------------------------------------------
-    // //
-    // playSenseObj.drawAndRotateBatNew = function() {
-
-    //     var _mythisobj = this;
-
-    //     var bat_height = 17;
-    //     var start_rotation_angle = 0.9;
-    //     var end_rotation_angle = -0.5;
-
-    //     this.bat.rotation.z = start_rotation_angle;
-    //     this.bat.position.x = 0 + bat_height * Math.sin(start_rotation_angle);
-    //     this.bat.position.y = bat_height - bat_height * Math.cos(start_rotation_angle);
-
-    //     var angle = start_rotation_angle;
-
-    //     // populate coordinates
-    //     // var points = [];
-    //     var speed = 0.08;
-
-    //     all_global_points = [];
-
-    //     var ctr = 0;
-
-    //     while (angle > end_rotation_angle) {
-
-    //         var pt = {
-    //             rotation: {},
-    //             position: {}
-    //         };
-
-    //         pt.rotation.x = 0;
-    //         pt.rotation.y = 0;
-    //         pt.rotation.z = angle;
-
-    //         var x_pos = 0 + bat_height * Math.sin(angle);
-    //         var y_pos = bat_height - bat_height * Math.cos(angle);
-    //         var z_pos = 0;
-
-    //         if (x_pos < 0) {
-    //             z_pos = -0.1 * ctr;
-    //             x_pos = -0.1 * ctr + bat_height * Math.sin(angle);
-
-    //             pt.rotation.y = -0.2;
-    //         }
-
-    //         pt.position.x = x_pos;
-    //         pt.position.y = y_pos;
-    //         pt.position.z = z_pos;
-
-    //         all_global_points.push(pt);
-
-    //         angle = angle - 0.05;
-    //         ctr = ctr + 1;
-    //     }
-
-    //     this.clock = new THREE.Clock();
-    //     render_new_inline();
-
-
-    //     function render_new_inline() {
-
-    //         var delta = _mythisobj.clock.getDelta();
-
-    //         var pt = all_global_points.shift();
-
-    //         if (pt) {
-
-    //             _mythisobj.bat.rotation.x = pt.rotation.x;
-    //             _mythisobj.bat.rotation.y = pt.rotation.y;
-    //             _mythisobj.bat.rotation.z = pt.rotation.z;
-
-    //             // Absolute angle
-    //             var bat_rot = Math.sqrt(_mythisobj.bat.rotation.x * _mythisobj.bat.rotation.x + _mythisobj.bat.rotation.y * _mythisobj.bat.rotation.y + _mythisobj.bat.rotation.z * _mythisobj.bat.rotation.z);
-    //             var bat_rot_angle = bat_rot * 180 / Math.PI;
-    //             bat_rot_angle = bat_rot_angle.toFixed(1);
-
-    //             if (pt.position.x > 0) {
-    //                 bat_rot_angle = -1.0 * bat_rot_angle;
-    //             }
-
-    //             $("#bat_rotation_angle").html(bat_rot_angle);
-
-    //             _mythisobj.bat.position.x = pt.position.x;
-    //             _mythisobj.bat.position.y = pt.position.y;
-    //             _mythisobj.bat.position.z = pt.position.z;
-
-    //             if (pt.position.x < 0) {
-    //                 _mythisobj.ball.position.x = pt.position.x;
-    //                 _mythisobj.ball.position.y = 1;
-    //                 _mythisobj.ball.position.z = pt.position.z;
-    //             }
-    //         }
-
-    //         trackballControls.update(delta);
-    //         requestAnimationFrame(render_new_inline);
-
-    //         _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
-
-    //     }
-    // }
 
 
 
@@ -366,80 +259,6 @@ var finalPlaySenseObject = function() {
 
         return bat;
     }
-
-
-    // ----------------------------------------------------
-    // Axes Object
-    playSenseObj.buildAxes = function(scene) {
-
-        var axis_len = 50;
-
-        var x_axis = new THREE.Geometry();
-        var x_axis_material = new THREE.LineBasicMaterial({
-            color: 0xFF0000,
-            linewidth: 5
-        });
-        x_axis.vertices.push(new THREE.Vector3(0, 0, 0));
-        x_axis.vertices.push(new THREE.Vector3(axis_len, 0, 0));
-        var x_axis_line = new THREE.Line(x_axis, x_axis_material);
-        scene.add(x_axis_line);
-
-        var x_axis2 = new THREE.Geometry();
-        var x_axis_material2 = new THREE.LineDashedMaterial({
-            color: 0xFF0000,
-            linewidth: 2
-        });
-        x_axis2.vertices.push(new THREE.Vector3(-2 * axis_len, 0, 0));
-        x_axis2.vertices.push(new THREE.Vector3(0, 0, 0));
-        var x_axis_line2 = new THREE.Line(x_axis2, x_axis_material2);
-        scene.add(x_axis_line2);
-
-
-
-        var y_axis = new THREE.Geometry();
-        var y_axis_material = new THREE.LineBasicMaterial({
-            color: 0x00FF00,
-            linewidth: 5
-        });
-        y_axis.vertices.push(new THREE.Vector3(0, 0, 0));
-        y_axis.vertices.push(new THREE.Vector3(0, axis_len/2, 0));
-        var y_axis_line = new THREE.Line(y_axis, y_axis_material);
-        scene.add(y_axis_line);
-
-        var y_axis2 = new THREE.Geometry();
-        var y_axis_material2 = new THREE.LineDashedMaterial({
-            color: 0x00FF00,
-            linewidth: 2
-        });
-        y_axis2.vertices.push(new THREE.Vector3(0, -2 * axis_len, 0));
-        y_axis2.vertices.push(new THREE.Vector3(0, 0, 0));
-        var y_axis_line2 = new THREE.Line(y_axis2, y_axis_material2);
-        scene.add(y_axis_line2);
-
-
-        var z_axis = new THREE.Geometry();
-        var z_axis_material = new THREE.LineBasicMaterial({
-            color: 0x0000FF,
-            linewidth: 5
-        });
-        z_axis.vertices.push(new THREE.Vector3(0, 0, 0));
-        z_axis.vertices.push(new THREE.Vector3(0, 0, axis_len));
-        var z_axis_line = new THREE.Line(z_axis, z_axis_material);
-        scene.add(z_axis_line);
-
-
-        var z_axis2 = new THREE.Geometry();
-        var z_axis_material2 = new THREE.LineDashedMaterial({
-            color: 0x0000FF,
-            linewidth: 2
-        });
-        z_axis2.vertices.push(new THREE.Vector3(0, 0, -2 * axis_len));
-        z_axis2.vertices.push(new THREE.Vector3(0, 0, 0));
-        var z_axis_line2 = new THREE.Line(z_axis2, z_axis_material2);
-        scene.add(z_axis_line2);
-
-    }
-
 
 
     // ----------------------------------------------------
@@ -595,20 +414,22 @@ var finalPlaySenseObject = function() {
             z_pos_wkt = z_pos_wkt + space_between_wkt;
         }
 
-        // // vertical line
-        // var material2 = new THREE.LineBasicMaterial({
-        //     color: 0xff0000,
-        //     linewidth: 2
-        // });
-        // var geometry2 = new THREE.Geometry();
-        // geometry2.vertices.push(new THREE.Vector3(0, 0, 0));
-        // geometry2.vertices.push(new THREE.Vector3(0, 25, 0));
-        // var line2 = new THREE.Line(geometry2, material2);
-        // scene.add(line2);
+        // vertical line
+        var material2 = new THREE.LineBasicMaterial({
+            color: 0xff0000,
+            linewidth: 2
+        });
+        var geometry2 = new THREE.Geometry();
+        geometry2.vertices.push(new THREE.Vector3(0, 0, 0));
+        geometry2.vertices.push(new THREE.Vector3(0, 25, 0));
+        var line2 = new THREE.Line(geometry2, material2);
+        scene.add(line2);
 
     }
 
 
     return playSenseObj;
+    
+};    // end of finalPlaySenseObject
 
-}; // end of finalPlaySenseObject
+
