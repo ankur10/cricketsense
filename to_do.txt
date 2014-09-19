@@ -1,16 +1,77 @@
-Sensor: 
-* Algorithm for sensor fusion
-* Detect shots
+
+---------------------
+Sensor/Back-end:
+---------------------
+
+- Fusion Algos
+	* Accel only - Done
+	* Accel + Gyro - Fri
+	* Accel + Gyro + Mag - Sat
+Fri - Data processing - from redis to redis
+Fri - Metrics calculation
+
+- Monitoring of signal between sensor and desktop
+- How to stop after one-shot
+- Phone sensor data collection + integrate
+- Motion detection/vibration
+- Library of simulated data
 
 
-UI:
-Metrics
-Record session + play
-Better bat rendering
-Graphs screen + rendering
-Mobile screen - make the above UI compatible on mobile
-New feature: aggregate stats screen
 
+
+---------------------
+User Interface:
+---------------------
+
+Fri - Data/Metrics:
+		* Graphs: accel, gyro, mag data
+		* Graphs: calculated metrics over time
+		* Tab: Final metrics
+- 3D Rendering:
+	* All/Individual angles camera view
+	* Bat movement:
+	Fri -- Bat 3D rotation
+		-- Bat angle overlay on ground		
+		-- Bat mesh
+		-- Vertical plane / bat axis
+	* Pause/play at any time
+	* Time slider
+	* Simulate ball movement
+- Visual appeal:
+	* Front page
+	* Logo
+	* Page layout
+	* Color scheme
+	* Better bat rendering	
+- Navigation:
+	* Browser screen to select which shots to see
+- Comparison:
+	* Select two shots
+	* Show difference in metrics
+	* Show difference - on bat movement
+- Historical/Aggregates:
+	* Combine all data
+	* Show wagon wheel
+- Mobile app
+
+
+---------------------
+Others:
+---------------------
+- Pitch slides
+- ARGUMENT REALITY! ARGUMENT REALITY! ARGUMENT REALITY! ARGUMENT REALITY! ARGUMENT REALITY! ARGUMENT REALITY!
+
+
+IMPORTANT:
+- Take ball and bat from office
+- Take mouse + batteries
+- Buy button battery
+
+
+
+
+
+http://www.pitchvision.com/the-luke-wright-tribute-how-to-get-more-bat-speed-in-your-cricket-shots/
 
 
 -----
