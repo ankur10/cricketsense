@@ -96,12 +96,12 @@
 
     var obj1 = new finalPlaySenseObject();
 
-    var options = {};
-    options.camera_position = all_camera_positions.default_camera_position;
-    options.div_name = "cricket_ground_1";
-    options.size = {width: 2000, height: 1000};
-    obj1.init(options);
-    obj1.drawAndRotateBatNew();
+    // var options = {};
+    // options.camera_position = all_camera_positions.default_camera_position;
+    // options.div_name = "cricket_ground_1";
+    // options.size = {width: 2000, height: 1000};
+    // obj1.init(options);
+    // obj1.drawAndRotateBatNew();
 
 
     // var obj2 = new finalPlaySenseObject();
@@ -202,7 +202,16 @@
     global_socket.emit("fetch_redis_sensor_data", values);
 
     global_socket.on('sensor_data', function (data) {        
-        
+         processSensorData(data);
+      
+    });    
+
+
+
+
+    function processSensorData(data){
+
+
        console.log("Inside sensor_data socket");
        // console.log(data);
 
@@ -224,9 +233,28 @@
 
 
 
+        
+
+        var obj1 = new finalPlaySenseObject();
+
+        var options = {};
+        options.camera_position = all_camera_positions.default_camera_position;
+        options.div_name = "cricket_ground_1";
+        options.size = {width: 2000, height: 1000};
+        obj1.init(options);
+        obj1.drawAndRotateBatNew();
 
 
 
-    });    
+
+
+    }
+
+
+
+
+
+
+
 
 </script>

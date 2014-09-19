@@ -11,58 +11,86 @@ var client2 = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_HOST);
 
 
 
-// var channel_name_sensor = "sensor_value_updated";
+// // var channel_name_sensor = "sensor_value_updated";
 
-// var ctr = 0;
-// function writeToRedis() {
+// // var ctr = 0;
+// // function writeToRedis() {
 
-//     var r = Math.random();
+// //     var r = Math.random();
 
-//     client1.set("accel_values", ctr);
-//     client1.publish(channel_name_sensor, ctr);
-//     ctr++;
-// }
+// //     client1.set("accel_values", ctr);
+// //     client1.publish(channel_name_sensor, ctr);
+// //     ctr++;
+// // }
 
-// setInterval(writeToRedis, 100);
-
-
+// // setInterval(writeToRedis, 100);
 
 
-// client2.subscribe(channel_name_sensor);
 
-// client2.on("message", function(channel, msg) {
-// 	console.log(channel, msg);
+
+// // client2.subscribe(channel_name_sensor);
+
+// // client2.on("message", function(channel, msg) {
+// // 	console.log(channel, msg);
+// // });
+
+
+// var keys = ["k1", "k2", "k3"];
+
+// // var kk = "k1 k2 jain";
+
+// client1.mget(keys, function(d, v) {
+//     if (!d) {
+//         console.log(d, v);
+//     } else {
+//         console.log("nullllll ...");
+//     }
+
+//     v.forEach(function(n) {
+//         if (n) {
+//             console.log(n);
+//         }
+//         // console.log(n);
+//     })
+// })
+
+
+// var wstream = fs.createWriteStream('myOutput.txt');
+// wstream.write('1Hello world!\n');
+// wstream.write('11Another line\n');
+// wstream.end();
+
+
+// var filename = "shot1.txt"
+
+// fs.readFile(filename, function(err, data) {
+//     console.log(data);
 // });
 
 
-var keys = ["k1", "k2", "k3"];
+var data = {
+    "time_stamp": 1411003440080,
+    "accelerometer": {
+        x: 0.078,
+        y: -0.234,
+        z: -0.078
+    },
+    "gyroscope": {
+        x: 4.868,
+        y: 1.259,
+        z: 0.618
+    },
+    "magnetometer": {
+        x: -58.594,
+        y: 19.409,
+        z: -21.881
+    }
+};
 
-// var kk = "k1 k2 jain";
+var h = {};
+h.d = JSON.stringify(data);
 
-client1.mget(keys, function(d, v){
-	if(!d){
-		console.log(d, v);
-	}else{
-		console.log("nullllll ...");
-	}
-
-	v.forEach(function(n){
-		if(n){
-			console.log(n);
-		}
-		// console.log(n);
-	})
-})
+client1.HMSET("ankur", h);
 
 
-var wstream = fs.createWriteStream('myOutput.txt');
-wstream.write('1Hello world!\n');
-wstream.write('11Another line\n');
-wstream.end();
 
-
-var filename = "shot1.txt"
-
-fs.readFile(filename, function(err, data){
-	console.log(data);
-});

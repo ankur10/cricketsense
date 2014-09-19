@@ -1,6 +1,5 @@
+var finalPlaySenseObject = function() {
 
-var finalPlaySenseObject = function(){
-    
     var playSenseObj = {};
 
     playSenseObj.scene = null;
@@ -62,6 +61,170 @@ var finalPlaySenseObject = function(){
 
         // ball
         this.ball = this.drawBall(this.scene);
+    }
+
+
+
+
+    // ----------------------------------------------------
+    //
+    playSenseObj.rotateBatUsingSensorData = function(sensor_data) {
+
+        var _mythisobj = this;
+
+        var bat_height = 17;
+        var start_rotation_angle = 0.9;
+        var end_rotation_angle = -0.5;
+
+        this.bat.rotation.z = start_rotation_angle;
+        this.bat.position.x = 0 + bat_height * Math.sin(start_rotation_angle);
+        this.bat.position.y = bat_height - bat_height * Math.cos(start_rotation_angle);
+
+        var angle = start_rotation_angle;
+
+        // populate coordinates
+        // var points = [];
+        var speed = 0.08;
+
+
+        var ctr = 0;
+        all_global_points = [];
+
+        var gyrscope_data = []
+        sensor_data.forEach(function(row) {
+
+            var pdata = row.processed_data;
+            var gyroscope = pdata.gyroscope;
+            gyrscope_data.push(gyroscope);
+        });
+
+
+        gyrscope_data.forEach(function(row) {
+            var pt = {
+                rotation: {},
+                position: {}
+            };
+
+            var angle = row.z;
+
+            pt.rotation.x = 0;
+            pt.rotation.y = 0;
+            pt.rotation.z = angle;
+
+            var x_pos = 0 + bat_height * Math.sin(angle);
+            var y_pos = bat_height - bat_height * Math.cos(angle);
+            var z_pos = 0;
+
+            if (x_pos < 0) {
+                z_pos = -0.1 * ctr;
+                x_pos = -0.1 * ctr + bat_height * Math.sin(angle);
+
+                pt.rotation.y = -0.2;
+            }
+
+            pt.position.x = x_pos;
+            pt.position.y = y_pos;
+            pt.position.z = z_pos;
+
+            all_global_points.push(pt);
+
+            ctr = ctr + 1;
+
+        });
+
+
+        console.log("all_global_points---> ", all_global_points);
+
+        all_global_points = all_global_points.slice(0, 20)
+
+
+        this.clock = new THREE.Clock();
+        // render_new_inline();
+
+
+        setInterval(my_new_render_func, 150);
+
+        function my_new_render_func(){
+
+            var delta = _mythisobj.clock.getDelta();
+            var pt = all_global_points.shift();
+
+            if (pt) {
+
+                var bat_rot_angle =  pt.rotation.z * Math.PI/180;
+                console.log(bat_rot_angle, pt.rotation.z);
+
+                _mythisobj.bat.rotation.x = pt.rotation.x;
+                _mythisobj.bat.rotation.y = pt.rotation.y;
+                _mythisobj.bat.rotation.z = pt.rotation.z;
+
+                $("#bat_rotation_angle").html(bat_rot_angle);
+
+                _mythisobj.bat.position.x = pt.position.x;
+                _mythisobj.bat.position.y = pt.position.y;
+                _mythisobj.bat.position.z = pt.position.z;
+
+                // if (pt.position.x < 0) {
+                //     _mythisobj.ball.position.x = pt.position.x;
+                //     _mythisobj.ball.position.y = 1;
+                //     _mythisobj.ball.position.z = pt.position.z;
+                // }
+            }
+
+            _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
+        }
+
+
+
+
+
+        function render_new_inline() {
+
+            var delta = _mythisobj.clock.getDelta();
+
+            var pt = all_global_points.shift();
+
+            if (pt) {
+
+
+                // Absolute angle
+                // var bat_rot = Math.sqrt(_mythisobj.bat.rotation.x * _mythisobj.bat.rotation.x + _mythisobj.bat.rotation.y * _mythisobj.bat.rotation.y + _mythisobj.bat.rotation.z * _mythisobj.bat.rotation.z);
+                // var bat_rot_angle = bat_rot * 180 / Math.PI;
+                // bat_rot_angle = bat_rot_angle.toFixed(1);                
+
+                // if (pt.position.x > 0) {
+                //     bat_rot_angle = -1.0 * bat_rot_angle;
+                // }
+
+
+                var bat_rot_angle =  pt.rotation.z * Math.PI/180;
+                console.log(bat_rot_angle, pt.rotation.z);
+
+                _mythisobj.bat.rotation.x = pt.rotation.x;
+                _mythisobj.bat.rotation.y = pt.rotation.y;
+                _mythisobj.bat.rotation.z = bat_rot_angle;
+
+
+
+                $("#bat_rotation_angle").html(bat_rot_angle);
+
+                _mythisobj.bat.position.x = pt.position.x;
+                _mythisobj.bat.position.y = pt.position.y;
+                _mythisobj.bat.position.z = pt.position.z;
+
+                if (pt.position.x < 0) {
+                    _mythisobj.ball.position.x = pt.position.x;
+                    _mythisobj.ball.position.y = 1;
+                    _mythisobj.ball.position.z = pt.position.z;
+                }
+            }
+
+            trackballControls.update(delta);
+            requestAnimationFrame(render_new_inline);
+
+            _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
+
+        }
     }
 
 
@@ -429,7 +592,5 @@ var finalPlaySenseObject = function(){
 
 
     return playSenseObj;
-    
-};    // end of finalPlaySenseObject
 
-
+}; // end of finalPlaySenseObject
