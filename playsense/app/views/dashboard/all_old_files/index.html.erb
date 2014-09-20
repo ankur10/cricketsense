@@ -1,0 +1,18 @@
+<script>
+  global_socket.on('news', function (data) {
+    console.log(data);
+    global_socket.emit('my other event', { my: 'data' });
+  });
+
+
+setInterval(function(){
+		var global_device_data = Math.random();
+		console.log("sending data to nodejs");
+		global_socket.emit('device_event', { "values": global_device_data });
+		// console.log(global_device_data.acceeleration.x);
+	}, 
+	100
+);
+
+
+</script>

@@ -1,0 +1,254 @@
+<style>
+    .outer_container{
+        margin: 0;
+        overflow: hidden;
+        padding: 20px;
+    }
+</style>
+
+
+<div id="outer_container">
+
+
+    <div class="row chart_container">
+        <h3>Acceleration</h3>
+        <div class="col-lg-10">
+            <div id="chart"></div>
+        </div>
+        <div class="col-lg-2">
+            <div id="legend"></div>            
+        </div>
+    </div>
+    <br><br>
+    
+    <div class="row">
+
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="default_view">Default View</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="side_view_off_side">Side View (Off Side)</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="side_view_leg_side">Side View (Leg Side)</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="front_view">Front View</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="top_view">Top View</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="top_view">
+                Bat Rotation: <span id="bat_rotation_angle"></span>
+            </button>
+
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="cricket_ground_1"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="cricket_ground_2"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="cricket_ground_3"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="cricket_ground_4"></div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+
+    // var playSenseObj = {};
+
+
+    var all_global_points = [];
+
+
+    var global_rotation_z = 0;
+
+    var global_rotation = {};
+    global_rotation.x = 0;
+    global_rotation.y = 0;
+    global_rotation.z = 0;
+
+
+    var all_camera_positions = {};
+
+    all_camera_positions.default_camera_position = { x: -80, y: 50, z: -50 };
+    all_camera_positions.top_view = { x: -10, y: 100, z: -10 };
+    all_camera_positions.side_view_off_side = { x: 0, y: 10, z: -60 };
+    all_camera_positions.side_view_leg_side = { x: -10, y: 10, z: 80 };
+    all_camera_positions.front_view = { x: -60, y: 30, z: 0 };
+
+
+    var obj1 = new finalPlaySenseObject();
+
+    // var options = {};
+    // options.camera_position = all_camera_positions.default_camera_position;
+    // options.div_name = "cricket_ground_1";
+    // options.size = {width: 2000, height: 1000};
+    // obj1.init(options);
+    // obj1.drawAndRotateBatNew();
+
+
+    // var obj2 = new finalPlaySenseObject();
+
+    // var options2 = {};
+    // options2.camera_position = all_camera_positions.top_view;
+    // options2.div_name = "cricket_ground2";
+    // options2.size = {width: 1000, height: 1000};
+    // obj2.init(options2);
+    // obj2.drawAndRotateBatNew();
+
+
+    // var ctr = 1;
+    // $.each(all_camera_positions, function(key, val){
+
+    //     var obj = new finalPlaySenseObject();
+
+    //     var opt = {};
+    //     opt.camera_position = val;
+    //     opt.div_name = "cricket_ground_" + (ctr);
+    //     opt.size = {width: 1000, height: 500};
+    //     obj.init(opt);
+    //     obj.drawAndRotateBatNew();
+
+    //     ctr++;
+    // })
+
+
+
+
+        // $(".camera_view").click(function() {
+        //     var camera_value = $(this).attr("camera_value");
+
+        //     var tmp_camera_position = all_camera_positions.default_camera_position;
+
+        //     if(camera_value === "default_view"){
+
+        //         tmp_camera_position = all_camera_positions.default_camera_position;
+
+        //     }else if(camera_value === "side_view_off_side"){
+        //         tmp_camera_position = all_camera_positions.side_view_off_side;
+
+
+        //     }else if(camera_value === "side_view_leg_side"){
+
+        //         tmp_camera_position = all_camera_positions.side_view_leg_side;
+
+
+        //     }else if(camera_value === "front_view"){
+
+        //         tmp_camera_position = all_camera_positions.front_view;
+
+
+        //     }else if(camera_value === "top_view"){
+
+        //         tmp_camera_position = all_camera_positions.top_view;
+
+
+        //     }
+
+        //     obj1.updateCameraPosition(tmp_camera_position);
+        //     obj1.drawAndRotateBatNew();
+
+        //     obj2.updateCameraPosition(tmp_camera_position);
+        //     obj2.drawAndRotateBatNew();
+
+
+        // });
+
+
+
+    var chart1 = new playSenseGraphObject();
+    var chart_options = {};
+    chart_options.chart_div = "chart";
+    chart_options.legend_div = "#legend";
+    chart_options.value_type = "orientation_webgl";
+    chart1.init(chart_options);
+    // chart1.drawRickshawChart();
+
+    global_socket.on('ti_sensor_tag_data', function (data) {        
+        
+        var n = data.ti_sensor_tag_data;
+
+        var gyroscope_data = n.gyroscope_data;
+        // chart1.plotData(gyroscope_data);
+
+        var accelerometer_data = n.accelerometer_data;
+        chart1.plotData(accelerometer_data);
+
+        var magnetometer_data = n.magnetometer_data;
+        // chart1.plotData(magnetometer_data);
+    });
+
+
+
+    var values = {};
+    values.shot_value = "shot5.csv";
+    global_socket.emit("fetch_redis_sensor_data", values);
+
+    global_socket.on('sensor_data', function (data) {        
+         processSensorData(data);
+      
+    });    
+
+
+
+    function processSensorData(data){
+
+       console.log("Inside sensor_data socket");
+       // console.log(data);
+
+       var sensor_data = data.sensor_data;
+
+       var data_array = [];
+        sensor_data.forEach(function(row){
+
+            var pdata = row.processed_data;
+
+            var accelerometer = pdata.accelerometer;
+            var velocity = pdata.velocity;
+            var gyroscope = pdata.gyroscope;
+            var time_stamp = row.time_stamp;
+
+            // chart1.plotData(pdata.velocity);
+        });
+
+
+
+        var obj1 = new finalPlaySenseObject();
+        
+
+        var options = {};
+        options.camera_position = all_camera_positions.side_view_leg_side;
+        options.div_name = "cricket_ground_1";
+        options.size = {width: 2000, height: 1000};
+        obj1.init(options);
+        // obj1.rotateBatUsingSensorData(sensor_data);
+        // obj1.ankurDrawAndRotateBatNew();
+        obj1.practiceRotation();
+
+    }
+
+
+
+
+
+
+
+
+</script>

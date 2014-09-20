@@ -56,7 +56,6 @@ var playSenseGraphObject = function() {
         rot_y = 0,
         rot_z = 0;
 
-    var value_type;
     var chart_div, legend_div;
 
 
@@ -65,7 +64,6 @@ var playSenseGraphObject = function() {
     _psenseObject.init = function(options) {
         chart_div = options.chart_div;
         legend_div = options.legend_div;
-        value_type = options.value_type;
     }
 
 
@@ -81,8 +79,8 @@ var playSenseGraphObject = function() {
 
         graph = new Rickshaw.Graph({
             element: document.getElementById(chart_div),
-            width: 1400,
-            height: 400,
+            width: 1000,
+            height: 250,
             renderer: 'line',
             stroke: true,
             preserve: true,
@@ -135,25 +133,37 @@ var playSenseGraphObject = function() {
             graph: graph,
             legend: legend
         });
-
     }
 
 
 
     // ----------------------------------------------------
     //
-    _psenseObject.plotData = function(data) {
+    _psenseObject.plotDataForAGivenPoint = function(pt_data) {
 
         // update rickshaw chart
         points_array_object.removeData(seriesData);
 
-        var pts_array = [data.x, data.y, data.z];
+        var pts_array = [pt_data.x, pt_data.y, pt_data.z];
         points_array_object.addNewDataPoint(seriesData, pts_array);
 
         graph.update();
-
     }
 
 
+    // ----------------------------------------------------
+    //
+    _psenseObject.plotDataForAGivenArrayOfPoints = function(data_array) {
 
+        // update rickshaw chart
+        points_array_object.removeData(seriesData);
+
+        // Add every point to the series
+        data_array.forEach(function(pt){
+            var tmp_array = [pt.x, pt.y, pt.z];
+            points_array_object.addNewDataPoint(seriesData, tmp_array);
+        });
+
+        graph.update();
+    }
 }

@@ -1,3 +1,13 @@
+// Predefined Camera Angles
+var all_camera_positions = {};
+all_camera_positions.default_camera_position = { x: -80, y: 50, z: -50 };
+all_camera_positions.top_view = { x: -10, y: 100, z: -10 };
+all_camera_positions.side_view_off_side = { x: 0, y: 10, z: -60 };
+all_camera_positions.side_view_leg_side = { x: -10, y: 10, z: 80 };
+all_camera_positions.front_view = { x: -60, y: 30, z: 0 };
+
+
+// ----------------------------------------------------
 var finalPlaySenseObject = function() {
 
     var playSenseObj = {};
@@ -11,6 +21,7 @@ var finalPlaySenseObject = function() {
     playSenseObj.axes = null;
     playSenseObj._mythisobj = null;
     playSenseObj.size = {};
+    playSenseObj._sensor_data = null;
 
 
     // ----------------------------------------------------
@@ -18,6 +29,9 @@ var finalPlaySenseObject = function() {
     playSenseObj.init = function(options) {
 
         var camera_position = options.camera_position;
+
+        // sensor data
+        this._sensor_data = options.sensor_data;
 
         var div_name = options.div_name;;
         var cricket_ground_div = $("#" + div_name);
@@ -65,14 +79,37 @@ var finalPlaySenseObject = function() {
 
         // axes
         this.axes = this.buildAxes(this.scene);
-
     }
-
 
 
     // ----------------------------------------------------
     //
-    playSenseObj.rotateBatUsingSensorData = function(sensor_data) {
+    playSenseObj.returnSensorData = function() {
+        return this._sensor_data;
+    };
+
+
+    // ----------------------------------------------------
+    //
+    playSenseObj.redraw = function(options_passed) {
+
+        var camera_position = options_passed.camera_position;
+        if (camera_position) {
+            // Camera and controls
+            var camera_and_controls = this.drawCameraAndControls(this.scene, camera_position);
+            this.camera = camera_and_controls.camera;
+            trackballControls = camera_and_controls.trackballControls;
+        }
+
+        this.rotateBatUsingSensorData();
+    };
+
+
+    // ----------------------------------------------------
+    //
+    playSenseObj.rotateBatUsingSensorData = function() {
+
+        var sensor_data = this._sensor_data;
 
         var _mythisobj = this;
 
@@ -89,7 +126,6 @@ var finalPlaySenseObject = function() {
         // populate coordinates
         // var points = [];
         var speed = 0.08;
-
 
         var ctr = 0;
         all_global_points = [];
@@ -133,19 +169,12 @@ var finalPlaySenseObject = function() {
             all_global_points.push(pt);
 
             ctr = ctr + 1;
-
         });
-
-
-        console.log(all_global_points);
-
-
 
         this.clock = new THREE.Clock();
         my_new_render_func();
 
         // setInterval(my_new_render_func, 200);
-
 
         function my_new_render_func() {
 
@@ -170,6 +199,117 @@ var finalPlaySenseObject = function() {
             _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
         }
     }
+
+
+    // ----------------------------------------------------
+    //
+    playSenseObj.practiceRotation = function() {
+
+
+
+
+        var _mythisobj = this;
+
+        var bat_height = 17;
+        var start_rotation_angle = 0.9;
+        var end_rotation_angle = -0.5;
+
+        this.bat.rotation.z = start_rotation_angle;
+        this.bat.rotation.x = 0;
+        this.bat.rotation.y = 0.9;
+
+
+        this.bat.position.x = 0 + bat_height * Math.sin(start_rotation_angle);
+        this.bat.position.y = bat_height - bat_height * Math.cos(start_rotation_angle);
+
+        var angle = start_rotation_angle;
+
+        // populate coordinates
+        // var points = [];
+        var speed = 0.08;
+
+        all_global_points = [];
+
+        var ctr = 0;
+
+        while (angle > end_rotation_angle) {
+
+            var pt = {
+                rotation: {},
+                position: {}
+            };
+
+            pt.rotation.x = angle;
+            pt.rotation.y = angle;
+            pt.rotation.z = angle;
+
+            var x_pos = 0 + bat_height * Math.sin(angle);
+            var y_pos = bat_height - bat_height * Math.cos(angle);
+            var z_pos = 0;
+
+            // if (x_pos < 0) {
+            //     z_pos = -0.1 * ctr;
+            //     x_pos = -0.1 * ctr + bat_height * Math.sin(angle);
+
+            //     pt.rotation.y = -0.2;
+            // }
+
+            pt.position.x = x_pos;
+            pt.position.y = y_pos;
+            pt.position.z = z_pos;
+
+            all_global_points.push(pt);
+
+            angle = angle - 0.05;
+            ctr = ctr + 1;
+        }
+
+        this.clock = new THREE.Clock();
+        render_new_inline();
+
+
+        function render_new_inline() {
+
+            var delta = _mythisobj.clock.getDelta();
+
+            var pt = all_global_points.shift();
+
+            if (pt) {
+
+                _mythisobj.bat.rotation.x = pt.rotation.x;
+                _mythisobj.bat.rotation.y = pt.rotation.y;
+                _mythisobj.bat.rotation.z = pt.rotation.z;
+
+                // Absolute angle
+                var bat_rot = Math.sqrt(_mythisobj.bat.rotation.x * _mythisobj.bat.rotation.x + _mythisobj.bat.rotation.y * _mythisobj.bat.rotation.y + _mythisobj.bat.rotation.z * _mythisobj.bat.rotation.z);
+                var bat_rot_angle = bat_rot * 180 / Math.PI;
+                bat_rot_angle = bat_rot_angle.toFixed(1);
+
+                if (pt.position.x > 0) {
+                    bat_rot_angle = -1.0 * bat_rot_angle;
+                }
+
+                $("#bat_rotation_angle").html(bat_rot_angle);
+
+                // _mythisobj.bat.position.x = pt.position.x;
+                // _mythisobj.bat.position.y = pt.position.y;
+                // _mythisobj.bat.position.z = pt.position.z;
+
+                // if (pt.position.x < 0) {
+                //     _mythisobj.ball.position.x = pt.position.x;
+                //     _mythisobj.ball.position.y = 1;
+                //     _mythisobj.ball.position.z = pt.position.z;
+                // }
+            }
+
+            trackballControls.update(delta);
+            requestAnimationFrame(render_new_inline);
+
+            _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
+
+        }
+    }
+
 
 
 
@@ -402,7 +542,7 @@ var finalPlaySenseObject = function() {
             linewidth: 5
         });
         y_axis.vertices.push(new THREE.Vector3(0, 0, 0));
-        y_axis.vertices.push(new THREE.Vector3(0, axis_len/2, 0));
+        y_axis.vertices.push(new THREE.Vector3(0, axis_len / 2, 0));
         var y_axis_line = new THREE.Line(y_axis, y_axis_material);
         scene.add(y_axis_line);
 

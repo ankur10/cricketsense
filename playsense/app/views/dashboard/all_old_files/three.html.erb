@@ -1,0 +1,215 @@
+<style>canvas { width: 100%; height: 100% }
+
+			#container {
+				background: #000;
+				width: 1400px;
+				height: 1300px;
+			}
+
+</style>
+
+
+<!-- <div id="container"></div> -->
+
+<script>
+
+func1();
+
+// logo();
+
+function logo(){
+
+    // Set up the scene, camera, and renderer as global variables.
+    var scene, camera, renderer;
+
+    init();
+    animate();
+
+    // Sets up the scene.
+    function init() {
+
+      // Create the scene and set the scene size.
+      scene = new THREE.Scene();
+      var WIDTH = window.innerWidth,
+          HEIGHT = window.innerHeight;
+
+      // Create a renderer and add it to the DOM.
+      renderer = new THREE.WebGLRenderer({antialias:true});
+      renderer.setSize(WIDTH, HEIGHT);
+      document.body.appendChild(renderer.domElement);
+
+      // Create a camera, zoom it out from the model a bit, and add it to the scene.
+      camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
+      camera.position.set(0,6,0);
+      scene.add(camera);
+
+      // Create an event listener that resizes the renderer with the browser window.
+      window.addEventListener('resize', function() {
+        var WIDTH = window.innerWidth,
+            HEIGHT = window.innerHeight;
+        renderer.setSize(WIDTH, HEIGHT);
+        camera.aspect = WIDTH / HEIGHT;
+        camera.updateProjectionMatrix();
+      });
+
+      // Set the background color of the scene.
+      renderer.setClearColorHex(0x333F47, 1);
+
+      // Create a light, set its position, and add it to the scene.
+      var light = new THREE.PointLight(0xffffff);
+      light.position.set(-100,200,100);
+      scene.add(light);
+
+      //0x55B663
+
+      // Load in the mesh and add it to the scene.
+      var loader = new THREE.JSONLoader();
+      loader.load( "/ankur.js", function(geometry){
+        var material = new THREE.MeshLambertMaterial({color: 0xFF000F});
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+      });
+
+      // Add OrbitControls so that we can pan around with the mouse.
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    }
+
+
+    // Renders the scene and updates the render as needed.
+    function animate() {
+
+      // Read more about requestAnimationFrame at http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+      requestAnimationFrame(animate);
+
+      		mesh.rotation.x += 0.1;
+			// mesh.rotation.y += 0.1;
+      
+      // Render the scene.
+      renderer.render(scene, camera);
+      controls.update();
+
+    }
+
+
+}
+
+function func1(){
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		var geometry = new THREE.BoxGeometry(1,1,1);
+		var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+		var cube = new THREE.Mesh(geometry, material);
+		scene.add(cube);
+
+		camera.position.z = 5;
+		// camera.position.x = 5;
+
+		var render = function () {
+			requestAnimationFrame(render);
+
+			cube.rotation.x += 0.1;
+			cube.rotation.y += 0.1;
+			cube.rotation.z += 0.1;
+
+			renderer.render(scene, camera);
+		};
+
+		render();
+}
+
+
+function func2(){
+		// set the scene size
+	var WIDTH = 2000,
+	    HEIGHT = 2000;
+
+	// set some camera attributes
+	var VIEW_ANGLE = 45,
+	    ASPECT = WIDTH / HEIGHT,
+	    NEAR = 0.1,
+	    FAR = 10000;
+
+	// get the DOM element to attach to
+	// - assume we've got jQuery to hand
+	var $container = $('#container');
+
+	// create a WebGL renderer, camera
+	// and a scene
+	var renderer = new THREE.WebGLRenderer();
+	var camera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
+	                                ASPECT,
+	                                NEAR,
+	                                FAR  );
+	var scene = new THREE.Scene();
+
+	// the camera starts at 0,0,0 so pull it back
+	camera.position.z = 500;
+
+	// start the renderer
+	renderer.setSize(WIDTH, HEIGHT);
+
+	// attach the render-supplied DOM element
+	$container.append(renderer.domElement);
+
+	// create the sphere's material
+	var sphereMaterial = new THREE.MeshLambertMaterial(
+	{
+	    color: 0xCC0000
+	});
+
+	// set up the sphere vars
+	var radius = 50, segments = 16, rings = 16;
+
+	// create a new mesh with sphere geometry -
+	// we will cover the sphereMaterial next!
+	var sphere = new THREE.Mesh(
+	   new THREE.SphereGeometry(radius, segments, rings),
+	   sphereMaterial);
+
+	// add the sphere to the scene
+	scene.add(sphere);
+
+	// and the camera
+	scene.add(camera);
+
+	// create a point light
+	var pointLight = new THREE.PointLight( 0xFFFFFF );
+
+	// set its position
+	pointLight.position.x = 1000;
+	pointLight.position.y = 1000;
+	pointLight.position.z = 1000;
+
+	// add to the scene
+	scene.add(pointLight);
+
+	// draw!
+	renderer.render(scene, camera);
+
+
+
+		var render = function () {
+			requestAnimationFrame(render);
+
+			sphere.rotation.x += 0.1;
+			sphere.rotation.y += 0.1;
+
+			renderer.render(scene, camera);
+		};
+
+		render();
+
+
+
+}
+
+
+
+
+</script>

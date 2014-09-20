@@ -1,0 +1,825 @@
+<style>
+    .outer_container{
+        margin: 0;
+        overflow: hidden;
+        padding: 20px;
+    }
+</style>
+
+
+<div id="outer_container">
+    
+    <div class="row">
+
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="default_view">Default View</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="side_view_off_side">Side View (Off Side)</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="side_view_leg_side">Side View (Leg Side)</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="front_view">Front View</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="top_view">Top View</button>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success camera_view" camera_value="top_view">
+                Bat Rotation: <span id="bat_rotation_angle"></span>
+            </button>
+
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div id="cricket_ground"></div>
+    </div>
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+    var all_global_points = [];
+
+
+    var global_rotation_z = 0;
+
+    var global_rotation = {};
+    global_rotation.x = 0;
+    global_rotation.y = 0;
+    global_rotation.z = 0;
+
+
+    var default_camera_position = { x: -80, y: 50, z: -50 };
+
+    // var default_camera_position = { x: 0, y: 10, z: -60 };
+
+
+    // $(document).ready(function() {
+
+        drawAndRotateBat(default_camera_position);
+
+        $(".camera_view").click(function() {
+            var camera_value = $(this).attr("camera_value");
+
+            var tmp_camera_position = default_camera_position
+
+            if(camera_value === "default_view"){
+
+                tmp_camera_position = default_camera_position;
+
+            }else if(camera_value === "side_view_off_side"){
+
+                tmp_camera_position.x = 0;
+                tmp_camera_position.y = 10;
+                tmp_camera_position.z = -60;
+
+
+            }else if(camera_value === "side_view_leg_side"){
+
+                tmp_camera_position.x = -10;
+                tmp_camera_position.y = 10;
+                tmp_camera_position.z = 80;
+
+            }else if(camera_value === "front_view"){
+
+                tmp_camera_position.x = -60;
+                tmp_camera_position.y = 30;
+                tmp_camera_position.z = 0;
+
+            }else if(camera_value === "top_view"){
+
+                tmp_camera_position.x = -10;
+                tmp_camera_position.y = 100;
+                tmp_camera_position.z = -10;
+
+            }
+
+            drawAndRotateBat(tmp_camera_position);
+
+        });
+
+    // });
+
+
+
+
+    // ----------------------------------------------------
+    //
+    function drawAndRotateBat(camera_position){
+
+            var cricket_ground_div = $("#cricket_ground");
+
+            $(cricket_ground_div).empty();
+            $(cricket_ground_div).html("");
+
+            // create a render and set the size
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMapEnabled = true;           
+
+            // add the output of the renderer to the html element
+            $(cricket_ground_div).append(renderer.domElement);
+
+            // create a scene, that will hold all our elements such as objects, cameras and lights.
+            var scene = new THREE.Scene();
+
+            // Ground
+            drawGround(scene);
+
+            // Pitch
+            drawPitch(scene);
+
+            // Camera and controls
+            var camera_and_controls = drawCameraAndControls(scene, camera_position);
+            camera = camera_and_controls.camera;
+            trackballControls = camera_and_controls.trackballControls;
+
+            // Lights
+            drawLight(scene);
+
+            // Bat
+            var bat = drawBat(scene);
+
+            // ball
+            var ball = drawBall(scene);
+
+            var bat_height = 17;
+            var start_rotation_angle = 0.9;
+            var end_rotation_angle = -0.5;
+
+            bat.rotation.z = start_rotation_angle; 
+            bat.position.x = 0 + bat_height*Math.sin(start_rotation_angle);          
+            bat.position.y = bat_height - bat_height*Math.cos(start_rotation_angle);     
+
+            var angle =  start_rotation_angle;    
+
+            // populate coordinates
+            // var points = [];
+            var speed = 0.08;
+
+            all_global_points = [];
+
+            var ctr = 0;
+
+            while(angle > end_rotation_angle){
+
+                var pt = {
+                    rotation: {},
+                    position: {}
+                };
+
+                pt.rotation.x = 0;
+                pt.rotation.y = 0;
+                pt.rotation.z = angle;
+
+                var x_pos =  0 + bat_height*Math.sin(angle); 
+                var y_pos = bat_height - bat_height*Math.cos(angle);    
+                var z_pos = 0;
+
+                if(x_pos < 0){
+                    z_pos = -0.1*ctr;
+                    x_pos =  -0.1*ctr + bat_height*Math.sin(angle); 
+
+                    pt.rotation.y = -0.2;                    
+                }
+
+                pt.position.x = x_pos;          
+                pt.position.y = y_pos;    
+                pt.position.z = z_pos;    
+
+                all_global_points.push(pt);                
+
+                angle = angle - 0.05;
+                ctr = ctr + 1;
+            }
+
+
+            var clock = new THREE.Clock();
+            render();
+
+            // render function
+            function render() {
+
+                var delta = clock.getDelta();
+                var pt = all_global_points.shift();
+
+                if(pt){
+                    
+                    bat.rotation.x = pt.rotation.x; 
+                    bat.rotation.y = pt.rotation.y; 
+                    bat.rotation.z = pt.rotation.z; 
+
+                    // Absolute angle
+                    var bat_rot = Math.sqrt(bat.rotation.x*bat.rotation.x + bat.rotation.y*bat.rotation.y + bat.rotation.z*bat.rotation.z);
+                    var bat_rot_angle = bat_rot * 180/Math.PI;
+                    bat_rot_angle = bat_rot_angle.toFixed(1);
+
+                    if(pt.position.x > 0){
+                        bat_rot_angle = -1.0 * bat_rot_angle;
+                    }
+
+                    $("#bat_rotation_angle").html(bat_rot_angle);
+
+                    bat.position.x = pt.position.x;           
+                    bat.position.y = pt.position.y;     
+                    bat.position.z = pt.position.z;  
+
+                    if(pt.position.x < 0){
+                        ball.position.x = pt.position.x;   
+                        ball.position.y = 1;   
+                        ball.position.z = pt.position.z;   
+                    }
+                }
+
+
+                trackballControls.update(delta);
+                requestAnimationFrame(render);
+                renderer.render(scene, camera);
+            }
+    }
+
+
+
+    // ----------------------------------------------------
+    // Camera and controls
+    function drawCameraAndControls(scene, camera_position){
+
+        // create a camera, which defines where we're looking at.
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.x = camera_position.x;
+        camera.position.y = camera_position.y;
+        camera.position.z = camera_position.z;
+        camera.lookAt(scene.position);
+
+        var trackballControls = new THREE.TrackballControls(camera);
+        trackballControls.rotateSpeed = 1.0;
+        trackballControls.zoomSpeed = 1.0;
+        trackballControls.panSpeed = 1.0;
+        trackballControls.staticMoving = true;
+        trackballControls.dynamicDampingFactor=0.3;
+
+        var obj = {};
+        obj.camera = camera;
+        obj.trackballControls = trackballControls;
+
+        return obj;
+    }  
+
+
+
+    // ----------------------------------------------------
+    // Lights
+    function drawLight(scene){
+
+        // add subtle ambient lighting
+        var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+        scene.add(ambientLight);
+
+        // add spotlight for the shadows
+        var spotLight = new THREE.SpotLight( 0xffffff );
+        spotLight.position.set( -400, 180, 20 );
+        spotLight.castShadow = true;
+        scene.add( spotLight );
+
+    }  
+
+
+    // ----------------------------------------------------
+    // Bat Object
+    function drawBat(scene){
+
+        // Cube
+        var material = new THREE.MeshLambertMaterial( {color: 0x6B4423 } );
+        var geom = new THREE.BoxGeometry(1.5,8,3);
+        var cube = new THREE.Mesh(geom,material);
+        cube.position.y = 8;
+        cube.castShadow=true;
+
+        // Cylinder
+        var geometry = new THREE.CylinderGeometry( 0.5, 0.5, 5 );
+        var material = new THREE.MeshBasicMaterial( {color: 0xfeb24c} );
+        var cylinder = new THREE.Mesh( geometry, material );
+        cylinder.position.y = 14;
+        cylinder.castShadow=true;            
+
+        // bat object
+        var bat = new THREE.Object3D();
+        bat.add( cube );
+        bat.add( cylinder);
+        scene.add( bat ); 
+
+        return bat;
+    }  
+
+
+    // ----------------------------------------------------
+    // Ball Object
+    function drawBall(scene){
+
+        var sphereGeometry = new THREE.SphereGeometry(1,20,20);
+        var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xC41E3A});
+        var ball = new THREE.Mesh(sphereGeometry,sphereMaterial);
+
+        // position the sphere
+        ball.position.x = 0;
+        ball.position.y = 1;
+        ball.position.z = 0;
+        ball.castShadow=true;
+
+        // add the sphere to the scene
+        scene.add(ball);
+
+        return ball;
+    }      
+
+
+    // ----------------------------------------------------
+    // Ground
+    function drawGround(scene){
+
+        // ground
+        var groundTexture = THREE.ImageUtils.loadTexture( "/ground_lower_res.jpg" );
+        groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+        groundTexture.repeat.set( 25, 25 );
+        groundTexture.anisotropy = 16;            
+        var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff, map: groundTexture } );
+
+        var ground_mesh = new THREE.Mesh( new THREE.PlaneGeometry( 3000, 3000 ), groundMaterial );
+        ground_mesh.position.y = -1;
+        ground_mesh.rotation.x = - Math.PI / 2;
+        scene.add( ground_mesh );
+    }    
+
+
+    // ----------------------------------------------------
+    // Pitch
+    function drawPitch(scene){
+
+        // ground plane
+        var pitchTexture = THREE.ImageUtils.loadTexture( "/ground_lower_res.jpg" );
+        pitchTexture.wrapS = pitchTexture.wrapT = THREE.RepeatWrapping;
+        pitchTexture.repeat.set( 5, 5 ); 
+        pitchTexture.anisotropy = 32;            
+        var pitchMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff, map: pitchTexture } );
+        var pitch_mesh = new THREE.Mesh( new THREE.PlaneGeometry( 60,30,1,1 ), pitchMaterial );
+
+        // rotate and position the plane
+        pitch_mesh.rotation.x = -0.5*Math.PI;
+        pitch_mesh.position.x = -15
+        pitch_mesh.position.y = 0
+        pitch_mesh.position.z = 0
+
+        // add the plane to the scene
+        scene.add(pitch_mesh);           
+        
+        drawPitchDecoration(scene);
+    }    
+
+
+
+    // ----------------------------------------------------
+    // Pitch Decoration
+    function drawPitchDecoration(scene){
+
+        // wicket line
+        var material1 = new THREE.LineBasicMaterial({ color: 0xEEEEEE, linewidth: 5 }); 
+        var geometry1 = new THREE.Geometry();
+        geometry1.vertices.push(new THREE.Vector3(0, 0, -14));
+        geometry1.vertices.push(new THREE.Vector3(0, 0, 14));
+        var line1 = new THREE.Line(geometry1, material1);        
+        scene.add(line1);
+
+        // crease line
+        var material_crease = new THREE.LineBasicMaterial({ color: 0xEEEEEE, linewidth: 5 }); 
+        var geometry_crease = new THREE.Geometry();
+        geometry_crease.vertices.push(new THREE.Vector3(9, 0, -14));
+        geometry_crease.vertices.push(new THREE.Vector3(9, 0, 14));
+        var line_crease = new THREE.Line(geometry_crease, material_crease);        
+        scene.add(line_crease);
+
+        // left wide line
+        var material_wide_line = new THREE.LineBasicMaterial({ color: 0xEEEEEE, linewidth: 3 }); 
+        var geometry_left_wide = new THREE.Geometry();
+        geometry_left_wide.vertices.push(new THREE.Vector3(0, 0, -14));
+        geometry_left_wide.vertices.push(new THREE.Vector3(14, 0, -14));
+        var line_wide_left = new THREE.Line(geometry_left_wide, material_wide_line);        
+        scene.add(line_wide_left);
+
+        // right wide line
+        var geometry_right_wide = new THREE.Geometry();
+        geometry_right_wide.vertices.push(new THREE.Vector3(0, 0, 14));
+        geometry_right_wide.vertices.push(new THREE.Vector3(14, 0, 14));
+        var line_wide_right = new THREE.Line(geometry_right_wide, material_wide_line);        
+        scene.add(line_wide_right);
+
+
+        // perpendicular line
+        var material_perpendicular_line = new THREE.LineBasicMaterial({ color: 0x162609, linewidth: 3 }); 
+
+        // wickets
+        var material_wkt = new THREE.LineBasicMaterial({ color: 0x6B4423, linewidth: 4 }); 
+        var x_pos_wkt = 9;
+        var wicket_height = 10;
+        var z_pos_wkt = -2;
+        var space_between_wkt = 2;
+
+        // draw wickets and perpendicular lines
+        for(var i=0; i<3; i++){
+            var geometry_wkt = new THREE.Geometry();
+            geometry_wkt.vertices.push(new THREE.Vector3(x_pos_wkt, 0, z_pos_wkt));
+            geometry_wkt.vertices.push(new THREE.Vector3(x_pos_wkt, wicket_height, z_pos_wkt));
+            var line_wkt = new THREE.Line(geometry_wkt, material_wkt);        
+            scene.add(line_wkt);            
+
+            var geometry_perpendicular_line = new THREE.Geometry();
+            geometry_perpendicular_line.vertices.push(new THREE.Vector3(-20, 0, z_pos_wkt));
+            geometry_perpendicular_line.vertices.push(new THREE.Vector3(15, 0, z_pos_wkt));
+            var line = new THREE.Line(geometry_perpendicular_line, material_perpendicular_line);        
+            scene.add(line);
+
+            z_pos_wkt = z_pos_wkt + space_between_wkt;
+        }
+
+        // vertical line
+        var material2 = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 2 }); 
+        var geometry2 = new THREE.Geometry();
+        geometry2.vertices.push(new THREE.Vector3(0, 0, 0));
+        geometry2.vertices.push(new THREE.Vector3(0, 25, 0));
+        var line2 = new THREE.Line(geometry2, material2);        
+        scene.add(line2);
+
+    }     
+
+
+
+    // ----------------------------------------------------
+    //
+    var pointsArrayObject = function(timeInterval) {
+
+        var addDataPoint;
+        timeInterval = timeInterval || 1;
+
+        var timeBase = Math.floor(new Date().getTime() / 1000);
+
+        this.addNewDataPoint = function(data, pt_passed) {
+            var index = data[0].length;
+            data.forEach( function(series, i) {
+
+                var nx = (index * timeInterval) + timeBase;
+
+                var ny = pt_passed[i];
+
+                var pt = {};
+                pt.x = nx;
+                pt.y = ny;
+                series.push(pt)
+            } );
+        };  
+
+        this.removeData = function(data) {
+            data.forEach( function(series) {
+
+                var len = series.length;
+                if(len > 100){
+                    series.shift();
+                }
+            } );
+            timeBase += timeInterval;
+        };
+    };
+
+
+    // ----------------------------------------------------
+    //
+    var playSenseObject = function() {
+
+        var _psenseObject = this;
+
+        var seriesData = [[], [], []];
+        var points_array_object = new pointsArrayObject(150);
+        var graph = null;
+
+        var origin_x = 0;
+        var origin_y = 0;
+        var origin_z = 0;
+
+        var rot_x = 0, rot_y = 0, rot_z = 0;
+
+        var value_type;
+        var chart_div, legend_div;
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.init = function(options){
+            chart_div = options.chart_div;
+            legend_div = options.legend_div;
+            value_type = options.value_type;            
+        }
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.drawRickshawChart = function(){
+
+            var palette = new Rickshaw.Color.Palette( { scheme: 'spectrum2000' } );
+
+            // instantiate our graph!
+
+            graph = new Rickshaw.Graph( {
+                element: document.getElementById(chart_div),
+                width: 1400,
+                height: 400,
+                renderer: 'line',
+                stroke: true,
+                preserve: true,
+                min: "auto",
+                series: [
+                    {
+                        color: "#FF0000",
+                        data: seriesData[0],
+                        name: 'X'
+                    },
+                    {
+                        color: "#00FF00",
+                        data: seriesData[1],
+                        name: 'Y'
+                    },
+                    {
+                        color: "#0000FF",
+                        data: seriesData[2],
+                        name: 'Z'
+                    }                       
+                ]
+            } );
+
+
+            graph.render();
+
+            var ticksTreatment = 'glow';
+
+            // var xAxis = new Rickshaw.Graph.Axis.Time( {
+            //  graph: graph,
+            //  ticksTreatment: ticksTreatment,
+            //  timeFixture: new Rickshaw.Fixtures.Time.Local()
+            // } );
+            // xAxis.render();
+
+            var yAxis = new Rickshaw.Graph.Axis.Y( {
+                graph: graph,
+                // tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                // ticksTreatment: ticksTreatment
+            } );
+            yAxis.render();
+
+            var legend = new Rickshaw.Graph.Legend({
+                graph: graph,
+                element: document.querySelector(legend_div)
+            });
+
+            var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
+                graph: graph,
+                legend: legend
+            });
+
+            var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
+                graph: graph,
+                legend: legend
+            });
+
+        }
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.processDataReceivedOnSocket = function(data){     
+            if(value_type === "acceleration"){
+                _psenseObject.processDataReceivedOnSocket_Acceleration(data);
+            }else if(value_type === "rotation"){
+                _psenseObject.processDataReceivedOnSocket_Rotation(data);
+            }else if(value_type === "orientation"){
+                _psenseObject.processDataReceivedOnSocket_Orientation(data);
+            }else if(value_type === "orientation_webgl"){
+                _psenseObject.processDataReceivedOnSocket_Orientation_Webgl(data);
+            }   
+        }
+    
+
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.processDataReceivedOnSocket_Orientation = function(data){     
+            console.log(data);
+            var values = data.device_orientation_event.values;
+
+            // var alpha = values.alpha;
+            // var beta = values.beta;
+            // var gamma = values.gamma;
+
+            var rot_x = values.alpha * Math.PI/180;
+            var rot_y = values.beta * Math.PI/180;
+            var rot_z = values.gamma * Math.PI/180;
+
+            console.log(rot_x, rot_y, rot_z);
+
+            global_rotation.x = rot_x;
+            global_rotation.y = rot_y;
+            global_rotation.z = rot_z;
+
+
+        }
+
+
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.processDataReceivedOnSocket_Orientation_Webgl = function(data){    
+
+            var values = data.device_orientation_event.values;
+
+            var alpha = values.alpha  * Math.PI/180;
+            var beta = values.beta  * Math.PI/180;
+            var gamma = values.gamma  * Math.PI/180;
+
+            alpha = alpha.toFixed(2);
+            beta = beta.toFixed(2);
+            gamma = gamma.toFixed(2);
+
+            console.log(alpha, beta, gamma);
+
+            var angle = alpha;
+            var bat_height = 17;
+
+            var pt = {
+                rotation: {},
+                position: {}
+            };
+
+            pt.rotation.x = 0;
+            pt.rotation.y = 0;
+            pt.rotation.z = alpha;
+
+            var x_pos =  0 + bat_height*Math.sin(angle); 
+            var y_pos = bat_height - bat_height*Math.cos(angle);    
+            var z_pos = 0;
+
+            pt.position.x = x_pos;          
+            pt.position.y = y_pos;    
+            pt.position.z = z_pos;    
+
+            // points.push(pt);
+            all_global_points.push(pt);
+        }
+
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.processDataReceivedOnSocket_Acceleration = function(data){        
+            var values = data.device_motion_event.values;
+            var acceleration = values.acceleration;
+
+            // update rickshaw chart
+            points_array_object.removeData(seriesData);
+
+            // var pts_array = [ acceleration.x, acceleration.y, acceleration.z];
+
+            var x, y, z;
+
+            // acceleration rate
+            if ( (acceleration.x > -2) && (acceleration.x < 2) ){
+                acceleration.x = 0;
+            }
+            x = acceleration.x;
+
+            if ( (acceleration.y > -2) && (acceleration.y < 2) ){
+                acceleration.y= 0;
+            }
+            y = acceleration.y;
+
+            if ( (acceleration.z > -2) && (acceleration.z < 2) ){
+                acceleration.z = 0;
+            }
+            z = acceleration.z;
+
+            var pts_array = [ x, y, z];
+            console.log(x, y, z);
+
+            points_array_object.addNewDataPoint(seriesData, pts_array);
+
+            graph.update();
+        }
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.processDataReceivedOnSocket_Rotation = function(data){        
+            var values = data.device_motion_event.values;
+            var rotationRate = values.rotationRate;
+
+            // update rickshaw chart
+            points_array_object.removeData(seriesData);
+
+            // rotation rate
+            if ( (rotationRate.alpha > -10) && (rotationRate.alpha < 10) ){
+                rotationRate.alpha = 0;
+            }
+            if(rotationRate.alpha != 0){
+                rot_x = rot_x + rotationRate.alpha;
+                if(rot_x / 360 > 1){
+                    rot_x = rot_x % 360;
+                }
+            }
+
+
+            if ( (rotationRate.beta > -10) && (rotationRate.beta < 10) ){
+                rotationRate.beta = 0;
+            }
+            if(rotationRate.beta != 0){
+                rot_y = rot_y + rotationRate.beta;
+                if(rot_y / 360 > 1){
+                    rot_y = rot_y % 360;
+                }
+
+            }
+
+            if ( (rotationRate.gamma > -10) && (rotationRate.gamma < 10) ){
+                rotationRate.gamma = 0;     
+            }
+            if(rotationRate.gamma != 0){
+                rot_z = rot_z + rotationRate.gamma;
+                if(rot_z / 360 > 1){
+                    rot_z = rot_z % 360;
+                }       
+            }
+
+            var pts_array = [ rot_x, rot_y, rot_z];
+
+            console.log(rot_x, rot_y, rot_z);
+
+            points_array_object.addNewDataPoint(seriesData, pts_array);
+
+            graph.update();
+
+            // myrotate(rot_x);
+        }
+
+
+
+        // ----------------------------------------------------
+        //
+        _psenseObject.processDataReceivedOnSocket_Orientation = function(data){     
+            console.log(data);
+            var values = data.device_orientation_event.values;
+
+            // update rickshaw chart
+            points_array_object.removeData(seriesData);
+
+            var alpha = values.alpha;
+            var beta = values.beta;
+            var gamma = values.gamma;
+
+            var pts_array = [ alpha, beta, gamma];
+            console.log(alpha, beta, gamma);
+
+            points_array_object.addNewDataPoint(seriesData, pts_array);
+
+            graph.update();
+
+            myRotateNew(pts_array);
+        }
+
+    }
+
+
+    var chart1 = new playSenseObject();
+    var options = {};
+    options.chart_div = "chart";
+    options.legend_div = "#legend";
+    options.value_type = "orientation_webgl";
+    chart1.init(options);
+    // chart1.drawRickshawChart();
+
+    global_socket.on('device_event_channel', function (data) {
+        // chart1.processDataReceivedOnSocket(data);
+    });
+
+
+    global_socket.on('device_orientation_channel', function (data) {
+        chart1.processDataReceivedOnSocket(data);
+    });
+
+
+
+</script>

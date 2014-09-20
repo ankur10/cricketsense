@@ -1,3 +1,7 @@
+.outermost_container{
+	margin: 10px 10px 10px 10px;
+}	
+
 .chart_container{
 	padding: 10px;
 	margin-bottom: 25px;
@@ -8,4 +12,50 @@
 
   /*background: -webkit-linear-gradient(90deg, #085078 10%, #4290A0 90%); /* Chrome 10+, Saf5.1+ */        	*/
 	padding: 5px;
+}
+
+
+#logo{
+	font-size: 24px;
+	color: red;
+}
+.header_div{
+	padding: 10px;
+	border: 1px solid #DDD;
+	background-color: #EEE;
+  	height: 6vh;	
+}
+.main_body{
+	padding: 10px;	
+	margin: 10px 0px;
+	border: 1px solid #DDD;
+	background-color: #EEE;	
+  	height: 90vh;
+}
+
+#cricket_ground{
+	height: 630px;
+}
+
+.camera_angles{
+	padding: 0px 0px 10px 15px;
+}
+
+.graph_heading{
+	font-size: 18px;
+	font-weight: bold;
+	padding: 0px 0px 5px 0px;
+	
+}
+
+.graph_div{
+	padding: 5px;
+	margin: 0px 0px 15px 0px;
+	/*background-color: white;*/
+}
+
+.metrics_heading{
+	font-size: 24px;
+	font-weight: bold;
+	padding: 40px 0px 20px 0px;
 }

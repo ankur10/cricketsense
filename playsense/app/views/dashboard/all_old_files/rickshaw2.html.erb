@@ -1,0 +1,128 @@
+<div id="content">
+
+	<div id="chart_container">
+		<div id="chart"></div>
+		<div id="timeline"></div>
+		<div id="preview"></div>
+	</div>
+
+</div>
+
+<script>
+
+
+
+var myAnkurRandom = function(timeInterval) {
+
+	var addData;
+	timeInterval = timeInterval || 1;
+
+	var lastRandomValue = 200;
+
+	var timeBase = Math.floor(new Date().getTime() / 1000);
+
+	this.addDataPoint = function(data, pt_passed) {
+		var index = data[0].length;
+		data.forEach( function(series) {
+
+			var nx = (index * timeInterval) + timeBase;
+			var ny = pt_passed.y;
+			ny = Math.random()*100 + Math.random()*100;
+
+
+
+			var pt = {};
+			pt.x = nx;
+			pt.y = ny;
+			series.push(pt)
+		} );
+	};
+
+	this.removeData = function(data) {
+		data.forEach( function(series) {
+			series.shift();
+		} );
+		timeBase += timeInterval;
+	};
+};
+
+
+
+var seriesData = [[]];
+var random = new myAnkurRandom(150);
+var graph = null;
+
+function drawRickshawChart(){
+
+	// var seriesData = [ [], []];
+	// var seriesData = [[]];
+
+	// var random = new myAnkurRandom(150);
+
+	for (var i = 0; i < 10; i++) {
+		var y = Math.random()*100 + 10;
+		var pt = {};
+		pt.y = y;
+		random.addDataPoint(seriesData, pt);	
+	}
+
+	var palette = new Rickshaw.Color.Palette( { scheme: 'colorwheel' } );
+
+	// instantiate our graph!
+
+	graph = new Rickshaw.Graph( {
+		element: document.getElementById("chart"),
+		width: 900,
+		height: 500,
+		renderer: 'line',
+		stroke: true,
+		preserve: true,
+		series: [
+			{
+				color: palette.color(),
+				data: seriesData[0],
+				name: 'Moscow'
+			}
+		]
+	} );
+
+	graph.render();
+
+	var ticksTreatment = 'glow';
+
+	var xAxis = new Rickshaw.Graph.Axis.Time( {
+		graph: graph,
+		ticksTreatment: ticksTreatment,
+		timeFixture: new Rickshaw.Fixtures.Time.Local()
+	} );
+
+	xAxis.render();
+
+	var yAxis = new Rickshaw.Graph.Axis.Y( {
+		graph: graph,
+		tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+		ticksTreatment: ticksTreatment
+	} );
+
+	yAxis.render();
+}
+
+
+setInterval( function() {
+	random.removeData(seriesData);
+
+	var y = Math.random()*100 + 10;
+	var pt = {};
+	pt.y = y;
+
+	random.addDataPoint(seriesData, pt);
+	graph.update();
+
+}, 200 );
+
+
+drawRickshawChart();
+
+
+
+</script>

@@ -1,0 +1,226 @@
+<div id="camera_view_container" class="row">
+   <div class="col-lg-9">
+        <!-- Camera Angles -->
+        <div class="row camera_angles">
+            <div class="btn-group">
+              <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                <span class="camera_view_button_text">Camera View</span> 
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="camera_view" camera_value="default_view">Main View</a></li>
+                <li><a href="#" class="camera_view" camera_value="side_view_off_side">Off Side</a></li>
+                <li><a href="#" class="camera_view" camera_value="side_view_leg_side">Leg Side</a></li>
+                <li><a href="#" class="camera_view" camera_value="front_view">Front View</a></li>
+                <li><a href="#" class="camera_view" camera_value="top_view">Top Angle</a></li>
+              </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="cricket_ground"></div>
+            </div>
+        </div>
+   </div>
+  <div class="col-lg-3">
+      <div class="metrics_heading">Metrics</div>
+      <div class="metrics_table">
+        <table class="table">
+          <tr>
+              <td>Bat Speed</td>
+              <td>14.3 km/h</td>      
+          </tr>
+          <tr>
+              <td>Sweet Spot</td>
+              <td>Yes!</td>      
+          </tr>
+          <tr>
+              <td>Bat Straight?</td>
+              <td>Yes</td>      
+          </tr>
+          <tr>
+              <td>Back Swing</td>
+              <td>30 deg</td>      
+          </tr>   
+          <tr>
+              <td>Impact Angle</td>
+              <td>15 deg</td>      
+          </tr>                      
+        </table>
+      </div>
+  </div>
+</div>
+
+
+<div class="container-fluid" id="graphs_view_container" style="display:none">
+</div>
+
+
+
+<script type="text/javascript">
+
+    var g_playsense_object = new finalPlaySenseObject();
+
+    $(document).ready(function() {
+
+        // set click handler for camera angles
+        setClickHandlerForCameraAngles();
+
+        // listen on socket to fetch data
+        fetchDataAndListenToSocket();
+    });
+
+
+    // ----------------------------------------------------
+    // Camera Angles
+    function setClickHandlerForCameraAngles(){
+
+        // Camera Angle Click Handler
+        $(".camera_view").click(function() {
+            var camera_value = $(this).attr("camera_value");
+            var camera_value_html = $(this).html();
+            $(".camera_view_button_text").html(camera_value_html);
+
+            var tmp_camera_position = all_camera_positions.default_camera_position;
+
+            if(camera_value === "default_view"){
+                tmp_camera_position = all_camera_positions.default_camera_position;
+            }else if(camera_value === "side_view_off_side"){
+                tmp_camera_position = all_camera_positions.side_view_off_side;
+            }else if(camera_value === "side_view_leg_side"){
+                tmp_camera_position = all_camera_positions.side_view_leg_side;
+            }else if(camera_value === "front_view"){
+                tmp_camera_position = all_camera_positions.front_view;
+            }else if(camera_value === "top_view"){
+                tmp_camera_position = all_camera_positions.top_view;
+            }        
+
+            var options = {};
+            options.camera_position = tmp_camera_position;
+            g_playsense_object.redraw(options);
+        });
+
+        // Camera Angle Click Handler
+        $(".top_header_links").click(function() {
+            var view_value = $(this).attr("view_value");
+
+            if(view_value === "camera_container"){
+                $("#camera_view_container").show();                
+                $("#graphs_view_container").hide();
+            }else if(view_value === "graphs_container"){
+                $("#camera_view_container").hide();                
+                $("#graphs_view_container").show();
+            }
+        });    
+    }
+
+
+    // ----------------------------------------------------
+    // Fetch Data and Listen to Socket
+    function fetchDataAndListenToSocket(){
+        // Fetch data from Nodejs Server
+        var values = {};
+        values.shot_value = "shot5.csv";
+        global_socket.emit("fetch_redis_sensor_data", values);
+
+        // listen on socket
+        global_socket.on('sensor_data', function (data) {   
+            processSensorDataReceived(data);      
+        });            
+    }
+
+
+    // ----------------------------------------------------
+    // process sensor data received
+    function processSensorDataReceived(data){
+
+        var selected_camera_angle = all_camera_positions.default_camera_position;
+
+        console.log("Inside sensor_data socket");
+        var sensor_data = data.sensor_data;
+        var data_array = [];
+        sensor_data.forEach(function(row){
+
+            var pdata = row.processed_data;
+            var accelerometer = pdata.accelerometer;
+            var velocity = pdata.velocity;
+            var gyroscope = pdata.gyroscope;
+            var time_stamp = row.time_stamp;
+        });
+
+        var CRICKET_GROUND_DIV_NAME = "cricket_ground";
+        var options = {};
+        options.camera_position = selected_camera_angle;
+        options.div_name = CRICKET_GROUND_DIV_NAME;
+
+        var width = $("#" + CRICKET_GROUND_DIV_NAME).width();
+        var height = $("#" + CRICKET_GROUND_DIV_NAME).height();
+
+        options.size = {width: width, height: height};
+        options.sensor_data = sensor_data;
+
+        g_playsense_object.init(options);
+        g_playsense_object.rotateBatUsingSensorData();
+        // obj1.ankurDrawAndRotateBatNew();
+        // obj1.practiceRotation();
+
+        updateGraphsAlso();
+    }
+
+
+    function updateGraphsAlso(){
+
+        var charts_container_div = "#graphs_view_container";
+        $(charts_container_div).empty();
+
+        var graphs_array = [];
+        
+        var h = {"graph_heading": "What is the rotation of your bat?", "data_element": "angular_vector"};
+        graphs_array.push(h);
+
+        h = {"graph_heading": "How fast your bat is moving?", "data_element": "accelerometer"};
+        graphs_array.push(h);
+
+        // h = {"graph_heading": "Magnetometer", "data_element": "magnetometer"};
+        // graphs_array.push(h);
+
+        var template_1 = '<div class="row graph_div" id="graph_chart_{{graph_id}}"><h3 class="graph_heading"> {{graph_heading}}</h3><div class="col-lg-10"><div id="chart_{{graph_id}}"></div></div><div class="col-lg-2"><div id="legend_{{graph_id}}"></div></div></div>';
+
+        graphs_array.forEach(function(d, index){
+            var data_options = {
+                "graph_id": index,
+                "graph_heading": d.graph_heading,
+                "data_type": d.data_element
+            };
+
+            var template = Handlebars.compile(template_1);
+            var html_content = template(data_options);
+
+            $(charts_container_div).append(html_content);
+
+            var chart_div = "chart_" + data_options.graph_id;
+            var legend_div = "#legend_" + data_options.graph_id;
+
+           var chart_obj = new playSenseGraphObject();
+            var chart_options = {};
+            chart_options.chart_div = chart_div;
+            chart_options.legend_div = legend_div;
+            chart_obj.init(chart_options);
+            chart_obj.drawRickshawChart();
+
+            var data_array = g_playsense_object.returnSensorData();
+
+            var points_array = [];
+            data_array.forEach(function(arr){
+                var elem = arr.processed_data;
+                var data_name = data_options.data_type;
+                var xyz = elem[data_name];
+                points_array.push(xyz);
+            });
+
+            chart_obj.plotDataForAGivenArrayOfPoints(points_array);
+        });
+    }
+
+
+</script>
