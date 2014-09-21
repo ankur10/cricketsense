@@ -16,32 +16,68 @@ var redis_client = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_HOST);
 // 4. try different window size to smooth accel data
 // 5. 
 
+var KEY_NEW_SENSOR_DATA = "new_sensor_data_available";
+
+// var filename = "shot6.csv";
+// startProcessing(filename);
 
 
-startProcessing();
+checkPresenceOfNewData();
+setInterval(checkPresenceOfNewData, 1000);
+
 
 
 // -------------------------------------------------
-function startProcessing() {
+function checkPresenceOfNewData() {
+    redis_client.get(KEY_NEW_SENSOR_DATA, function(err, val) {
+        console.log(err, val);
+        if (val === "1") {
+            // reset new_sensor_data_available
+            redis_client.set(KEY_NEW_SENSOR_DATA, 0);
 
-    var filename = "shot5.csv";
+            console.log("New data detected");
+            var filename = "sensor_data.txt";
+            startProcessing(filename);
+        } else {
+            console.log("new data not found");
+        }
+    });
+}
+
+
+// -------------------------------------------------
+function startProcessing(filename) {
+
+    // var filename = "shot6.csv";
 
     fs.readFile(filename, 'utf8', function(err, data) {
 
-        var raw_signal_data = readRawSignalData(data);
-        var processed_signal_data = processRawSignalData(raw_signal_data);
-        // console.log(processed_signal_data);
+        if (!err) {
 
-        // put this in Redis
-        var key_name = filename;
-        storeDataInRedis(key_name, processed_signal_data);
+            // check if data length is ok. 
+            // min threshold lines
+            var min_threshold_for_valid_file = 4;
+
+            if (data && data.length > min_threshold_for_valid_file) {
+
+                var raw_signal_data = readRawSignalData(data);
+                var processed_signal_data = processRawSignalData(raw_signal_data);
+
+                // put this in Redis
+                var cur_time = Date.now();
+                var key_name = "shot_" + cur_time;
+                storeDataInRedis(key_name, processed_signal_data);
+            }
+        } else {
+            console.log("Registered an error while reading from sensor file -> ", err);
+        }
+
     });
 }
 
 
 // -------------------------------------------------
 function storeDataInRedis(key_name, data) {
-
 
     // put this in Redis
     var h = {};
@@ -55,7 +91,21 @@ function storeDataInRedis(key_name, data) {
         // console.log(x);
         console.log("Length --->", x.length);
         console.log(x[5]);
+    });
 
+
+    // // update keys
+    // redis_client.sadd("all_shots", key_name, function(err, d) {
+    //     console.log(err, d);
+    // });
+
+    // update keys
+    redis_client.rpush("all_shots_list", key_name, function(err, d) {
+
+        console.log("----------------------");
+        console.log("all_shots_list liste,,,,,,")
+        console.log(err, d);
+        console.log("----------------------");
     });
 }
 
@@ -431,9 +481,6 @@ function fixDecimalPlacesForAGivenVector(vector) {
 
     return new_vector;
 }
-
-
-
 
 
 // -------------------------------------------------

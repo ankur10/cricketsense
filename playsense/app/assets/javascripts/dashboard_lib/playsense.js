@@ -1,10 +1,30 @@
 // Predefined Camera Angles
 var all_camera_positions = {};
-all_camera_positions.default_camera_position = { x: -80, y: 50, z: -50 };
-all_camera_positions.top_view = { x: -10, y: 100, z: -10 };
-all_camera_positions.side_view_off_side = { x: 0, y: 10, z: -60 };
-all_camera_positions.side_view_leg_side = { x: -10, y: 10, z: 80 };
-all_camera_positions.front_view = { x: -60, y: 30, z: 0 };
+all_camera_positions.default_camera_position = {
+    x: -60,
+    y: 50,
+    z: -50
+};
+all_camera_positions.top_view = {
+    x: -10,
+    y: 100,
+    z: -10
+};
+all_camera_positions.side_view_off_side = {
+    x: 0,
+    y: 10,
+    z: -60
+};
+all_camera_positions.side_view_leg_side = {
+    x: -10,
+    y: 10,
+    z: 80
+};
+all_camera_positions.front_view = {
+    x: -60,
+    y: 30,
+    z: 0
+};
 
 
 // ----------------------------------------------------
@@ -22,6 +42,10 @@ var finalPlaySenseObject = function() {
     playSenseObj._mythisobj = null;
     playSenseObj.size = {};
     playSenseObj._sensor_data = null;
+    playSenseObj._slow_flag_on = "no";
+
+    // playSenseObj.trackballControls = null;
+    // playSenseObj.flyControls = null;
 
 
     // ----------------------------------------------------
@@ -32,6 +56,8 @@ var finalPlaySenseObject = function() {
 
         // sensor data
         this._sensor_data = options.sensor_data;
+
+        this._slow_flag_on = options.slow_flag_on;
 
         var div_name = options.div_name;;
         var cricket_ground_div = $("#" + div_name);
@@ -66,6 +92,7 @@ var finalPlaySenseObject = function() {
         // Camera and controls
         var camera_and_controls = this.drawCameraAndControls(this.scene, camera_position);
         this.camera = camera_and_controls.camera;
+        // this.trackballControls = camera_and_controls.trackballControls;
         trackballControls = camera_and_controls.trackballControls;
 
         // Lights
@@ -99,6 +126,7 @@ var finalPlaySenseObject = function() {
             var camera_and_controls = this.drawCameraAndControls(this.scene, camera_position);
             this.camera = camera_and_controls.camera;
             trackballControls = camera_and_controls.trackballControls;
+            // this.trackballControls = camera_and_controls.trackballControls;
         }
 
         this.rotateBatUsingSensorData();
@@ -172,8 +200,8 @@ var finalPlaySenseObject = function() {
         });
 
         this.clock = new THREE.Clock();
-        my_new_render_func();
 
+        my_new_render_func();
         // setInterval(my_new_render_func, 200);
 
         function my_new_render_func() {
@@ -190,12 +218,10 @@ var finalPlaySenseObject = function() {
                 _mythisobj.bat.position.x = pt.position.x;
                 _mythisobj.bat.position.y = pt.position.y;
                 _mythisobj.bat.position.z = pt.position.z;
-
             }
 
-            trackballControls.update(delta);
+            trackballControls.update(delta);            
             requestAnimationFrame(my_new_render_func);
-
             _mythisobj.renderer.render(_mythisobj.scene, _mythisobj.camera);
         }
     }
@@ -204,8 +230,6 @@ var finalPlaySenseObject = function() {
     // ----------------------------------------------------
     //
     playSenseObj.practiceRotation = function() {
-
-
 
 
         var _mythisobj = this;
@@ -443,6 +467,15 @@ var finalPlaySenseObject = function() {
         camera.position.z = camera_position.z;
         camera.lookAt(scene.position);
 
+        // var flyControls = new THREE.FlyControls(camera);
+
+        // flyControls.movementSpeed = 25;
+        // flyControls.domElement = document.querySelector("#WebGL-output");
+        // flyControls.rollSpeed = Math.PI / 24;
+        // flyControls.autoForward = true;
+        // flyControls.dragToLook = false;
+
+
         var trackballControls = new THREE.TrackballControls(camera);
         trackballControls.rotateSpeed = 1.0;
         trackballControls.zoomSpeed = 1.0;
@@ -453,6 +486,7 @@ var finalPlaySenseObject = function() {
         var obj = {};
         obj.camera = camera;
         obj.trackballControls = trackballControls;
+        // obj.flyControls = flyControls;
 
         return obj;
     }
@@ -529,7 +563,7 @@ var finalPlaySenseObject = function() {
             color: 0xFF0000,
             linewidth: 2
         });
-        x_axis2.vertices.push(new THREE.Vector3(-2 * axis_len, 0, 0));
+        x_axis2.vertices.push(new THREE.Vector3(axis_len, 0, 0));
         x_axis2.vertices.push(new THREE.Vector3(0, 0, 0));
         var x_axis_line2 = new THREE.Line(x_axis2, x_axis_material2);
         scene.add(x_axis_line2);
@@ -573,7 +607,7 @@ var finalPlaySenseObject = function() {
             color: 0x0000FF,
             linewidth: 2
         });
-        z_axis2.vertices.push(new THREE.Vector3(0, 0, -2 * axis_len));
+        z_axis2.vertices.push(new THREE.Vector3(0, 0, -1 * axis_len));
         z_axis2.vertices.push(new THREE.Vector3(0, 0, 0));
         var z_axis_line2 = new THREE.Line(z_axis2, z_axis_material2);
         scene.add(z_axis_line2);

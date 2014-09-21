@@ -20,11 +20,11 @@ var time_accel = Date.now();
 var time_gyro = Date.now();
 var time_mag = Date.now();
 
-
+var KEY_NEW_SENSOR_DATA = "new_sensor_data_available";
 var KEY_ACCEL_DATA = "key_accelerometer_data";
 var KEY_GYRO_DATA = "key_gyroscope_data";
 var KEY_MAGNETO_DATA = "key_magenetometer_data";
-
+var SENSOR_DATA_INTERMEDIATE_FILE_NAME = "sensor_data.txt"
 
 // Gyroscope Period
 var GYRO_PERIOD_UUID = 'f000aa5304514000b000000000000000'
@@ -32,6 +32,25 @@ SensorTag.prototype.setGyroscopePeriod = function(period, callback) {
     console.log("Inside my setGyroscopePeriod");
     this.writePeriodCharacteristic(GYRO_PERIOD_UUID, period, callback);
 };
+
+
+fs.unlink(SENSOR_DATA_INTERMEDIATE_FILE_NAME, function(err) {
+    if (err) throw err;
+    console.log('successfully deleted ' + SENSOR_DATA_INTERMEDIATE_FILE_NAME);
+});
+
+
+process.stdin.resume();
+
+process.on('SIGINT', function() {
+
+    console.log("\n Sensor collection stopped. Updating database.\n")
+    // reset new_sensor_data_available
+    client1.set(KEY_NEW_SENSOR_DATA, 1);
+
+    // console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+    process.exit();
+})
 
 
 
@@ -48,6 +67,8 @@ SensorTag.discover(function(tag) {
         sensorTag.discoverServicesAndCharacteristics(function() {
             console.log('discoverServicesAndCharacteristics');
 
+            // reset new_sensor_data_available
+            client1.set(KEY_NEW_SENSOR_DATA, 0);
 
             // -------------------------------------------------
             // Accelerometer
@@ -64,7 +85,7 @@ SensorTag.discover(function(tag) {
                             client1.set(KEY_ACCEL_DATA, val);
 
                             fetchDataFromRedisandSaveInAFile();
-                            
+
                             var n = Date.now();
                             var t = n - time_accel;
                             time_accel = n;
@@ -98,8 +119,7 @@ SensorTag.discover(function(tag) {
                     });
                 });
             });
-
-
+            
 
             // -------------------------------------------------
             // Gyroscope
@@ -133,16 +153,13 @@ SensorTag.discover(function(tag) {
 });
 
 
-
 var last_time = Date.now();
-
 
 var send_data_period = 100;
 // setInterval(fetchDataFromRedisandSaveInAFile, send_data_period);
 
-
-var wstream = fs.createWriteStream('sensor_data.txt');
-
+// var wstream = fs.createWriteStream('sensor_data.txt');
+var wstream = fs.createWriteStream(SENSOR_DATA_INTERMEDIATE_FILE_NAME);
 
 // -----------------------------------------------------
 function fetchDataFromRedisandSaveInAFile() {
@@ -150,26 +167,43 @@ function fetchDataFromRedisandSaveInAFile() {
     client1.mget(redis_keys_arr, function(err, results) {
         if (!err) {
 
-            if (results.length > 0 && results[0] != null) {
+            var can_write = false;
+
+            if (results.length > 2 && results[0] != null) {
 
                 var accel_hash = {},
                     gyro_hash = {},
                     magneto_hash = {};
 
-                var accel_data = results[0].split(",");
-                accel_hash.x = parseFloat(accel_data[0], 10).toFixed(3);
-                accel_hash.y = parseFloat(accel_data[1], 10).toFixed(3);
-                accel_hash.z = parseFloat(accel_data[2], 10).toFixed(3);
+                if (results[0]) {
+                    var accel_data = results[0].split(",");
+                    accel_hash.x = parseFloat(accel_data[0], 10).toFixed(3);
+                    accel_hash.y = parseFloat(accel_data[1], 10).toFixed(3);
+                    accel_hash.z = parseFloat(accel_data[2], 10).toFixed(3);
+                    can_write = true;
+                } else {
+                    can_write = false;
+                }
 
-                var gyro_data = results[1].split(",");
-                gyro_hash.x = parseFloat(gyro_data[0], 10).toFixed(3);
-                gyro_hash.y = parseFloat(gyro_data[1], 10).toFixed(3);
-                gyro_hash.z = parseFloat(gyro_data[2], 10).toFixed(3);
+                if (results[1]) {
+                    var gyro_data = results[1].split(",");
+                    gyro_hash.x = parseFloat(gyro_data[0], 10).toFixed(3);
+                    gyro_hash.y = parseFloat(gyro_data[1], 10).toFixed(3);
+                    gyro_hash.z = parseFloat(gyro_data[2], 10).toFixed(3);
+                    can_write = true;
+                } else {
+                    can_write = false;
+                }
 
-                var magneto_data = results[2].split(",");
-                magneto_hash.x = parseFloat(magneto_data[0], 10).toFixed(3);
-                magneto_hash.y = parseFloat(magneto_data[1], 10).toFixed(3);
-                magneto_hash.z = parseFloat(magneto_data[2], 10).toFixed(3);
+                if (results[2]) {
+                    var magneto_data = results[2].split(",");
+                    magneto_hash.x = parseFloat(magneto_data[0], 10).toFixed(3);
+                    magneto_hash.y = parseFloat(magneto_data[1], 10).toFixed(3);
+                    magneto_hash.z = parseFloat(magneto_data[2], 10).toFixed(3);
+                    can_write = true;
+                } else {
+                    can_write = false;
+                }
 
                 // write to file
                 var time_stamp = Date.now();
@@ -179,8 +213,10 @@ function fetchDataFromRedisandSaveInAFile() {
                 txt_to_write += magneto_hash.x + "," + magneto_hash.y + "," + magneto_hash.z;
                 txt_to_write += "\n";
 
-                console.log(txt_to_write);
-                wstream.write(txt_to_write);
+                if (can_write) {
+                    console.log(txt_to_write);
+                    wstream.write(txt_to_write);
+                }
             }
         } else {
             console.log("error in fetching data from Redis for", redis_keys_arr);

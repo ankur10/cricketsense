@@ -1,7 +1,12 @@
-<div id="camera_view_container" class="row">
-   <div class="col-lg-9">
+<div id="camera_view_container" class="row view_container">
+   <div class="col-lg-12">
         <!-- Camera Angles -->
-        <div class="row camera_angles">
+        
+        <div class="row camera_angles col-lg-2">
+            <div id="new_shot_detected"> </div>
+        </div>
+
+        <div class="row camera_angles col-lg-offset-10">
             <div class="btn-group">
               <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                 <span class="camera_view_button_text">Camera View</span> 
@@ -13,16 +18,19 @@
                 <li><a href="#" class="camera_view" camera_value="side_view_leg_side">Leg Side</a></li>
                 <li><a href="#" class="camera_view" camera_value="front_view">Front View</a></li>
                 <li><a href="#" class="camera_view" camera_value="top_view">Top Angle</a></li>
+                <li><a href="#" class="camera_view" camera_value="top_view">All Angles</a></li>                
               </ul>
             </div>
         </div>
+
         <div class="row">
             <div class="col-lg-12">
                 <div id="cricket_ground"></div>
             </div>
         </div>
    </div>
-  <div class="col-lg-3">
+
+  <div class="col-lg-3" style="display:none">
       <div class="metrics_heading">Metrics</div>
       <div class="metrics_table">
         <table class="table">
@@ -52,14 +60,21 @@
 </div>
 
 
-<div class="container-fluid" id="graphs_view_container" style="display:none">
+<div class="container-fluid view_container" id="graphs_view_container" style="display:none">
 </div>
 
+
+<div class="container-fluid view_container" id="all_shots_view_container" style="display:none">
+
+</div>
 
 
 <script type="text/javascript">
 
     var g_playsense_object = new finalPlaySenseObject();
+    var g_latest_shot_value = null;
+
+    var first_time_on_page_load = true;
 
     $(document).ready(function() {
 
@@ -68,6 +83,11 @@
 
         // listen on socket to fetch data
         fetchDataAndListenToSocket();
+
+        // get all shots continously
+        setInterval(function(){
+            global_socket.emit("get_all_shots", {});
+        }, 1000)
     });
 
 
@@ -100,16 +120,19 @@
             g_playsense_object.redraw(options);
         });
 
+
         // Camera Angle Click Handler
         $(".top_header_links").click(function() {
             var view_value = $(this).attr("view_value");
 
-            if(view_value === "camera_container"){
+            $(".view_container").hide();
+
+           if(view_value === "camera_container"){
                 $("#camera_view_container").show();                
-                $("#graphs_view_container").hide();
             }else if(view_value === "graphs_container"){
-                $("#camera_view_container").hide();                
                 $("#graphs_view_container").show();
+            }else if(view_value === "all_shots_container"){
+                $("#all_shots_view_container").show();                
             }
         });    
     }
@@ -119,20 +142,117 @@
     // Fetch Data and Listen to Socket
     function fetchDataAndListenToSocket(){
         // Fetch data from Nodejs Server
-        var values = {};
-        values.shot_value = "shot5.csv";
-        global_socket.emit("fetch_redis_sensor_data", values);
+        // var values = {};
+        // values.shot_value = "shot5.csv";
+        // global_socket.emit("fetch_redis_sensor_data", values);
+        
+        // get_all_shots on page load
+        global_socket.emit("get_all_shots", {});
 
         // listen on socket
         global_socket.on('sensor_data', function (data) {   
             processSensorDataReceived(data);      
-        });            
+        });     
+
+        // // listen on socket
+        // global_socket.on('all_shots', function (data) {   
+        //     console.log("all_shots");
+        //     console.log(data);      
+        //     var shots_list = data.all_shots;
+        //     updateListOfAllShots(shots_list);
+        // });      
+
+        // listen on socket
+        global_socket.on('all_shots_list', function (data) {   
+            // console.log("all_shots_list");
+            // console.log(data);      
+            var shots_list = data.all_shots;
+            shots_list.reverse();
+            updateListOfAllShots(shots_list);
+
+            // if new shot is received, update screen
+            var latest_shot = shots_list[0];
+            if(latest_shot != g_latest_shot_value){
+
+                console.log("New shot detected");
+                g_latest_shot_value = latest_shot;
+
+                 // Fetch data from Nodejs Server
+                var values = {};
+                values.shot_value = latest_shot;
+                global_socket.emit("fetch_redis_sensor_data", values);
+
+            }else{
+                console.log("all old shots");
+            }
+        });   
     }
 
 
     // ----------------------------------------------------
     // process sensor data received
+    function updateListOfAllShots(shots_list){
+
+        var list_container = "#all_shots_view_container";
+        $(list_container).empty();
+
+        var template_str = '<div class="shot_item"><a href="#" class="shot_item_link" shot_key="{{key_name}}">{{shot_name}}</a></div>';
+        // var template_str = '<div class="shot_item"><a href="#" class="shot_item_link" shot_key="{{key_name}}"><span class="glyphicon glyphicon-th-large"></span> {{shot_name}}</a></div>';
+        var shot_template = Handlebars.compile(template_str);
+
+        shots_list.forEach(function(shot, index){
+
+            var shot_name = shot;
+
+            // extract the timestamp and present a better name
+            var arr = shot.split("_");
+            if(arr.length > 1){
+                var ts = arr[1];
+                ts = +ts;
+                var ndate = new Date(ts);
+                shot_name = ndate;
+
+                shot_name = "Shot played at " + ndate.toLocaleDateString() + " - " + ndate.getHours() + ":" + ndate.getMinutes();
+            }
+
+            // console.log(shot, shot_name);
+
+            var data_options = {
+                "key_name": shot,
+                "shot_name": shot_name
+            }
+            var html_content = shot_template(data_options);
+            $(list_container).append(html_content);
+        });
+
+
+        $(".shot_item_link").click(function() {
+            var shot_key = $(this).attr("shot_key");
+            // shot_key = "shot5.csv";
+
+            console.log("shot item clicked ...> ", shot_key);
+
+            var values = {};
+            values.shot_value = shot_key;
+            global_socket.emit("fetch_redis_sensor_data", values);
+        });
+
+    }
+
+
+
+    // ----------------------------------------------------
+    // process sensor data received
     function processSensorDataReceived(data){
+
+        if(first_time_on_page_load != true){
+            $("#new_shot_detected").html("New Shot Detected");            
+        }else{
+            first_time_on_page_load = false;
+        }
+
+
+        $("#cricket_ground").empty();
 
         var selected_camera_angle = all_camera_positions.default_camera_position;
 
@@ -154,10 +274,15 @@
         options.div_name = CRICKET_GROUND_DIV_NAME;
 
         var width = $("#" + CRICKET_GROUND_DIV_NAME).width();
+        if(width < 100){
+            width = 1300;
+        }
+
         var height = $("#" + CRICKET_GROUND_DIV_NAME).height();
 
         options.size = {width: width, height: height};
         options.sensor_data = sensor_data;
+        options.slow_flag_on = "yes";
 
         g_playsense_object.init(options);
         g_playsense_object.rotateBatUsingSensorData();
@@ -165,6 +290,9 @@
         // obj1.practiceRotation();
 
         updateGraphsAlso();
+
+        $(".view_container").hide();
+        $("#camera_view_container").show(); 
     }
 
 
@@ -175,10 +303,10 @@
 
         var graphs_array = [];
         
-        var h = {"graph_heading": "What is the rotation of your bat?", "data_element": "angular_vector"};
+        var h = {"graph_heading": "What was the rotation of your bat?", "data_element": "angular_vector"};
         graphs_array.push(h);
 
-        h = {"graph_heading": "How fast your bat is moving?", "data_element": "accelerometer"};
+        h = {"graph_heading": "How fast your bat was moving?", "data_element": "accelerometer"};
         graphs_array.push(h);
 
         // h = {"graph_heading": "Magnetometer", "data_element": "magnetometer"};

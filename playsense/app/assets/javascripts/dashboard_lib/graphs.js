@@ -80,7 +80,7 @@ var playSenseGraphObject = function() {
         graph = new Rickshaw.Graph({
             element: document.getElementById(chart_div),
             width: 1000,
-            height: 250,
+            height: 200,
             renderer: 'line',
             stroke: true,
             preserve: true,

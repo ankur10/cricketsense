@@ -33,6 +33,23 @@ io.on('connection', function (socket) {
   
   socket.emit('ankur_news', { hello: 'world says hello.....' });
   
+  // send socket data
+  socket.on('get_all_shots', function (v) {
+
+    var key_name = "all_shots";
+    redis_client.smembers(key_name, function(err, d) {
+        console.log("sending json data over socket ---> list of all shots: ", d);
+        socket.emit('all_shots', { "all_shots": d });
+    });
+
+    var key_name = "all_shots_list";
+    redis_client.lrange(key_name, 0, -1, function(err, arr) {
+        console.log("sending json data over socket ---> list of all shots: ", arr);
+        socket.emit('all_shots_list', { "all_shots": arr});
+    });
+
+  });
+
 
 
   // send socket data
@@ -41,7 +58,7 @@ io.on('connection', function (socket) {
     var key_name = values.shot_value;
     redis_client.hgetall(key_name, function(err, d) {
         var x = JSON.parse(d.json_data);
-        console.log("sending json data over socket");
+        console.log("sending json data over socket for ", key_name);
         socket.emit('sensor_data', { sensor_data: x });
     });
   });
